@@ -109,5 +109,15 @@ module Proposition
         expect(atomic_sentence.distribute(b, Logic::OR).in_text).to eq(expected)
       end
     end
+
+    describe "clause" do
+      it "should return a single-element NArySentence" do
+        expect(atomic_sentence.clause).to be_a(NArySentence)
+      end
+
+      it "should contain a copy of the atomic literal" do
+        expect(atomic_sentence.clause.sentences[0]).to eq(atomic_sentence)
+      end
+    end
   end
 end
