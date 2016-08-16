@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 module Proposition
   RSpec.describe Processor do
     let(:a) { AtomicSentence.new("A") }
@@ -25,11 +27,29 @@ module Proposition
 
     let(:c_and_d) { CompoundSentence.new(c, Logic::AND, d) }
     let(:complex) { CompoundSentence.new(a_and_b, Logic::AND, c_and_d) }
-    let(:f_or_complex) { CompoundSentence.new(f, Logic::OR, complex) }
+    let(:e_or_complex) { CompoundSentence.new(e, Logic::OR, complex) }
 
     describe "retrieve_atomic_components" do
-      it "should extract the atomic components" do
-        Processor.retrieve_atomic_components(f_or_complex)
+      it "should return an array" do
+        expect(Processor.retrieve_atomic_components(e_or_complex)).to be_a(Array)
+      end
+
+      it "should contain only atomic components" do
+        Processor.retrieve_atomic_components(e_or_complex).each do |sentence|
+          expect(sentence).to be_a(AtomicSentence)
+        end
+      end
+
+      it "should contain atomic representations of each component" do
+        expected_components = [a,b,c,d,e]
+
+        processed_components = Processor.retrieve_atomic_components(e_or_complex)
+
+        expect(expected_components.length).to eq(processed_components.length)
+
+        processed_components.each do |sentence|
+          expect(expected_components).to include(sentence)
+        end
       end
     end
 
@@ -37,6 +57,35 @@ module Proposition
       let(:expected) { "(G AND (A OR B OR C OR D OR E OR F))" }
       it "should extract the atomic components to an array of arrays" do
         expect(Processor.build_cnf_sentence(g_and_others).in_text).to eq(expected)
+      end
+    end
+
+    describe "resolution" do
+      let(:a_or_b_clause) { Processor.build_cnf_sentence(a_or_b) }
+      let(:c_or_d_clause) { Processor.build_cnf_sentence(c_or_d) }
+
+      it "should contain all of the unique atomic components of the clauses" do
+        expected_components = Processor.retrieve_atomic_components(a_or_b) +
+          Processor.retrieve_atomic_components(c_or_d)
+
+        resolved = Processor.resolution(a_or_b_clause, c_or_d_clause)
+
+        resolved_sentences = resolved.sentences.map do |sentence|
+          {  sentence.in_text => sentence }
+        end.reduce Hash.new, :merge
+
+        expected_components.each do |atomic|
+          expect(resolved_sentences[atomic.in_text]).to eq(atomic)
+        end
+      end
+
+      context "with contradictory literals" do
+        let(:not_a_clause) { a.negate.clause }
+        let(:a_clause) { a.clause }
+
+        it "should remove contradictory literals" do
+          expect(Processor.resolution(not_a_clause, a_clause).empty?).to eq(true)
+        end
       end
     end
   end

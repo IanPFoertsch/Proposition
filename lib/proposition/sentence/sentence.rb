@@ -8,5 +8,9 @@ module Proposition
     def is_compound?
       false
     end
+
+    def is_clause?
+      false
+    end
   end
 end

@@ -11,7 +11,7 @@ module Proposition
         .push_not_down
         .push_or_down
 
-      cnf_sentence = recurse_to_or(eliminated).first
+      recurse_to_or(eliminated).first
     end
 
     def self.recurse_to_or(sentence)
@@ -49,6 +49,18 @@ module Proposition
           return left_components + right_components
         end
       end
+    end
+
+    def self.resolution(a_clause, b_clause)
+      unless a_clause.is_clause? && b_clause.is_clause?
+        raise "sentence: #{a_clause.in_text} & #{b_clause.in_text} should both be clauses"
+      end
+
+      b_clause.sentences.each do |sentence|
+        a_clause = a_clause.resolve(sentence)
+      end
+
+      a_clause
     end
   end
 end

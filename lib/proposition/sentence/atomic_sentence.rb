@@ -54,6 +54,14 @@ module Proposition
       return self
     end
 
+    def push_or_down
+      self
+    end
+
+    def retrieve_atomic_components
+      [self]
+    end
+
     def no_complex_operations?
       return true
     end
@@ -72,6 +80,14 @@ module Proposition
 
     def push_operator_down(operator)
       return self
+    end
+
+    def clause
+      NArySentence.new(Logic::OR, self.deep_copy)
+    end
+
+    def atomic_components
+      self
     end
   end
 end
