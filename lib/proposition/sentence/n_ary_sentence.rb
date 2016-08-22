@@ -29,6 +29,7 @@ module Proposition
       true
     end
 
+
     def retrieve_atomic_components
       @sentences.each do |sentence|
         unless sentence.is_a?(AtomicSentence)
@@ -39,7 +40,22 @@ module Proposition
       @sentences.clone
     end
 
-    def resolve(add_me)
+    def resolve(a_clause)
+      unless self.is_clause? && a_clause.is_clause?
+        raise "sentence: #{in_text} & sentence: #{a_clause.in_text} should both be clauses"
+      end
+
+      working_copy = self.deep_copy
+
+      a_clause.sentences.each do |sentence|
+        working_copy = working_copy.add_sentence(sentence)
+      end
+
+      working_copy
+
+    end
+
+    def add_sentence(add_me)
       if @sentences.include?(add_me.negate)
         return NArySentence.new(@operator, @sentences.clone.reject { |s| s == add_me.negate })
       elsif @sentences.include?(add_me)
@@ -51,6 +67,14 @@ module Proposition
 
     def empty?
       return @sentences.empty?
+    end
+
+    def ==(other_sentence)
+      return false unless other_sentence.is_a?(NArySentence)
+      #TODO: This is wrong, figure out a better way to compare object equality
+      return false unless in_text == other_sentence.in_text
+      true
+
     end
   end
 end

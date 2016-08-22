@@ -2,6 +2,7 @@
 module Proposition
   class Processor
     def self.build_cnf_sentence(sentence)
+      #TODO: Move this into the sentence classes
       #given a sentence, execute the following:
       # 1.) eliminate XOR, IMPLICATION, BICONDITIONAL
       eliminated = sentence
@@ -15,6 +16,7 @@ module Proposition
     end
 
     def self.recurse_to_or(sentence)
+      #TODO Push this asking, not telling block into the sentence classes
       if sentence.is_atomic?
         return [sentence]
       elsif sentence.is_compound?
@@ -51,16 +53,5 @@ module Proposition
       end
     end
 
-    def self.resolution(a_clause, b_clause)
-      unless a_clause.is_clause? && b_clause.is_clause?
-        raise "sentence: #{a_clause.in_text} & #{b_clause.in_text} should both be clauses"
-      end
-
-      b_clause.sentences.each do |sentence|
-        a_clause = a_clause.resolve(sentence)
-      end
-
-      a_clause
-    end
   end
 end
