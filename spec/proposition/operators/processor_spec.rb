@@ -59,34 +59,5 @@ module Proposition
         expect(Processor.build_cnf_sentence(g_and_others).in_text).to eq(expected)
       end
     end
-
-    describe "resolution" do
-      let(:a_or_b_clause) { Processor.build_cnf_sentence(a_or_b) }
-      let(:c_or_d_clause) { Processor.build_cnf_sentence(c_or_d) }
-
-      it "should contain all of the unique atomic components of the clauses" do
-        expected_components = Processor.retrieve_atomic_components(a_or_b) +
-          Processor.retrieve_atomic_components(c_or_d)
-
-        resolved = Processor.resolution(a_or_b_clause, c_or_d_clause)
-
-        resolved_sentences = resolved.sentences.map do |sentence|
-          {  sentence.in_text => sentence }
-        end.reduce Hash.new, :merge
-
-        expected_components.each do |atomic|
-          expect(resolved_sentences[atomic.in_text]).to eq(atomic)
-        end
-      end
-
-      context "with contradictory literals" do
-        let(:not_a_clause) { a.negate.clause }
-        let(:a_clause) { a.clause }
-
-        it "should remove contradictory literals" do
-          expect(Processor.resolution(not_a_clause, a_clause).empty?).to eq(true)
-        end
-      end
-    end
   end
 end
