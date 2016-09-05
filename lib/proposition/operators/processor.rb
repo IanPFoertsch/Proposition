@@ -53,5 +53,17 @@ module Proposition
       end
     end
 
+    #given 2 sentences, a knowledge_base, and a query,
+    #test if the KB entails the query
+    def self.pl_resolution(knowledge_base, query)
+      #generate a new sentence from KB AND (NOT (Query))
+      not_query = CompoundSentence.new(query, Logic::NOT)
+      combined = CompoundSentence.new(knowledge_base, Logic::AND, not_query)
+
+      cnf = build_cnf_sentence(combined)
+
+      #retreive the sentences from the cnf and operate on that
+
+    end
   end
 end
