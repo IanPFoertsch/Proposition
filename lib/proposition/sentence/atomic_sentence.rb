@@ -89,5 +89,9 @@ module Proposition
     def atomic_components
       self
     end
+
+    def contains_operator?(operator)
+      return !@operator.nil? && @operator == operator && operator == Logic::NOT
+    end
   end
 end

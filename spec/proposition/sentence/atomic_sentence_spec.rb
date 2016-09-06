@@ -119,5 +119,20 @@ module Proposition
         expect(atomic_sentence.clause.sentences[0]).to eq(atomic_sentence)
       end
     end
+
+    describe "contains_operator?" do
+      let(:not_sentence) { atomic_sentence.negate }
+      it "should be false for a sentence without an operator" do
+        expect(atomic_sentence.contains_operator?(Logic::NOT)).to be false
+      end
+
+      it "should be false for any operator other than NOT" do
+        expect(not_sentence.contains_operator?(Logic::AND)).to be false
+      end
+
+      it "should be true for a negated sentence and contains NOT query" do
+        expect(not_sentence.contains_operator?(Logic::NOT)).to be true
+      end
+    end
   end
 end

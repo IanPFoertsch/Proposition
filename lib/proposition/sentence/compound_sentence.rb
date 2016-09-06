@@ -185,6 +185,14 @@ module Proposition
       end
     end
 
+
+
+    def contains_operator?(operator)
+      right = @right ? @right.contains_operator?(operator) : false
+
+      @operator == operator || right || @left.contains_operator?(operator)
+    end
+
     private
 
     def rotate

@@ -263,9 +263,6 @@ module Proposition
 
 
         context "a sentence with the operator in both subsentences" do
-          let(:e) { AtomicSentence.new("E") }
-          let(:f) { AtomicSentence.new("F") }
-          let(:g) { AtomicSentence.new("G") }
 
           let(:a_or_b) { CompoundSentence.new(a, Logic::OR, b) }
           let(:c_or_d) { CompoundSentence.new(c, Logic::OR, d) }
