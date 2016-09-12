@@ -185,7 +185,11 @@ module Proposition
       end
     end
 
-
+    def to_clause
+      if contains_operator?(Logic::AND)
+        raise "to_clause called on sentence containing AND operator"
+      end
+    end
 
     def contains_operator?(operator)
       right = @right ? @right.contains_operator?(operator) : false

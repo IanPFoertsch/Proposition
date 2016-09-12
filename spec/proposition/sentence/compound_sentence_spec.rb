@@ -277,5 +277,31 @@ module Proposition
         end
       end
     end
+
+    context "contains_operator" do
+      let(:c_and_d) { CompoundSentence.new(c, Logic::AND, d) }
+      let(:a_or_c_and_d) { CompoundSentence.new(a, Logic::OR, c_and_d) }
+
+      it "should check the subsentences" do
+        expect(a_or_c_and_d.contains_operator?(Logic::AND)).to eq(true)
+      end
+
+      it "should check the first level of nesting" do
+        expect(a_or_c_and_d.contains_operator?(Logic::OR)).to eq(true)
+      end
+
+      it "should return false for an operator which is absent" do
+        expect(a_or_c_and_d.contains_operator?(Logic::XOR)).to eq(false)
+      end
+    end
+
+    context "to_clause" do
+      context "when a sentence contains an AND operator" do
+
+        it "should throw an exception" do
+          expect{ a_and_b.to_clause }.to raise_error("to_clause called on sentence containing AND operator")
+        end
+      end
+    end
   end
 end
