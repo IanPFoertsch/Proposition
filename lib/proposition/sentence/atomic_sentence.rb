@@ -82,7 +82,7 @@ module Proposition
       return self
     end
 
-    def clause
+    def to_clause
       NArySentence.new(Logic::OR, self.deep_copy)
     end
 

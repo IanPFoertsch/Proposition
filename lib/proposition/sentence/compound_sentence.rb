@@ -187,7 +187,11 @@ module Proposition
 
     def to_clause
       if contains_operator?(Logic::AND)
+        #TODO: expand this to throw if sentence contains IMPLICATION, XOR, or
+        #BICONDITIONAL
         raise "to_clause called on sentence containing AND operator"
+      else
+        
       end
     end
 
@@ -206,5 +210,7 @@ module Proposition
         CompoundSentence.new(@right.deep_copy, @operator, @left.deep_copy)
       end
     end
+
+
   end
 end

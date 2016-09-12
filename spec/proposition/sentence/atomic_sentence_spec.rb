@@ -112,11 +112,11 @@ module Proposition
 
     describe "clause" do
       it "should return a single-element NArySentence" do
-        expect(atomic_sentence.clause).to be_a(NArySentence)
+        expect(atomic_sentence.to_clause).to be_a(NArySentence)
       end
 
       it "should contain a copy of the atomic literal" do
-        expect(atomic_sentence.clause.sentences[0]).to eq(atomic_sentence)
+        expect(atomic_sentence.to_clause.sentences[0]).to eq(atomic_sentence)
       end
     end
 
