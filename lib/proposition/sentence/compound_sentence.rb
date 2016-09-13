@@ -185,6 +185,22 @@ module Proposition
       end
     end
 
+    def to_clause
+      if contains_operator?(Logic::AND)
+        #TODO: expand this to throw if sentence contains IMPLICATION, XOR, or
+        #BICONDITIONAL
+        raise "to_clause called on sentence containing AND operator"
+      else
+        
+      end
+    end
+
+    def contains_operator?(operator)
+      right = @right ? @right.contains_operator?(operator) : false
+
+      @operator == operator || right || @left.contains_operator?(operator)
+    end
+
     private
 
     def rotate
@@ -194,5 +210,7 @@ module Proposition
         CompoundSentence.new(@right.deep_copy, @operator, @left.deep_copy)
       end
     end
+
+
   end
 end

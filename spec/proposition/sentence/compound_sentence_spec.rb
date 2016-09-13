@@ -1,19 +1,9 @@
 require 'spec_helper'
+require_relative '../sentence_fixtures'
 
 module Proposition
   RSpec.describe CompoundSentence do
-    let(:a) { AtomicSentence.new("A") }
-    let(:b) { AtomicSentence.new("B") }
-    let(:c) { AtomicSentence.new("C") }
-    let(:d) { AtomicSentence.new("D") }
-    let(:f) { AtomicSentence.new("F") }
-
-    let(:not_sentence) { CompoundSentence.new(a, Logic::NOT) }
-    let (:compound_sentence) {CompoundSentence.new(a, Logic::AND, b)}
-    let(:a_and_b) { CompoundSentence.new(a, Logic::AND, b) }
-    let(:c_implication_d) { CompoundSentence.new(c, Logic::IMPLICATION, d) }
-
-    let(:complex_compound) { CompoundSentence.new(a_and_b, Logic::XOR, c_implication_d) }
+    include_context "sentence fixtures"
 
     describe "is_unary?" do
       it "should be true for a unary Sentence" do
@@ -273,9 +263,6 @@ module Proposition
 
 
         context "a sentence with the operator in both subsentences" do
-          let(:e) { AtomicSentence.new("E") }
-          let(:f) { AtomicSentence.new("F") }
-          let(:g) { AtomicSentence.new("G") }
 
           let(:a_or_b) { CompoundSentence.new(a, Logic::OR, b) }
           let(:c_or_d) { CompoundSentence.new(c, Logic::OR, d) }
@@ -287,6 +274,32 @@ module Proposition
           it "should recurse to the subsentences but leave them unchanged" do
             expect(all_or.push_or_down.in_text).to eq(expected)
           end
+        end
+      end
+    end
+
+    context "contains_operator" do
+      let(:c_and_d) { CompoundSentence.new(c, Logic::AND, d) }
+      let(:a_or_c_and_d) { CompoundSentence.new(a, Logic::OR, c_and_d) }
+
+      it "should check the subsentences" do
+        expect(a_or_c_and_d.contains_operator?(Logic::AND)).to eq(true)
+      end
+
+      it "should check the first level of nesting" do
+        expect(a_or_c_and_d.contains_operator?(Logic::OR)).to eq(true)
+      end
+
+      it "should return false for an operator which is absent" do
+        expect(a_or_c_and_d.contains_operator?(Logic::XOR)).to eq(false)
+      end
+    end
+
+    context "to_clause" do
+      context "when a sentence contains an AND operator" do
+
+        it "should throw an exception" do
+          expect{ a_and_b.to_clause }.to raise_error("to_clause called on sentence containing AND operator")
         end
       end
     end
