@@ -10,6 +10,8 @@ module Proposition
     let(:f) { AtomicSentence.new("F") }
     let(:g) { AtomicSentence.new("G") }
 
+    let(:a_or_b) { CompoundSentence.new(a, Logic::OR, b) }
+    let(:c_or_d) { CompoundSentence.new(c, Logic::OR, d) }
 
     let(:not_sentence) { CompoundSentence.new(a, Logic::NOT) }
     let (:compound_sentence) {CompoundSentence.new(a, Logic::AND, b)}
