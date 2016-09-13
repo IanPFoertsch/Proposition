@@ -263,16 +263,12 @@ module Proposition
 
 
         context "a sentence with the operator in both subsentences" do
-
-          let(:a_or_b) { CompoundSentence.new(a, Logic::OR, b) }
-          let(:c_or_d) { CompoundSentence.new(c, Logic::OR, d) }
-
-          let(:all_or) { CompoundSentence.new(a_or_b, Logic::OR, c_or_d) }
+          let(:two_or_subsentences) { CompoundSentence.new(a_or_b, Logic::OR, c_or_d) }
 
           let(:expected) { "((A OR B) OR (C OR D))" }
 
           it "should recurse to the subsentences but leave them unchanged" do
-            expect(all_or.push_or_down.in_text).to eq(expected)
+            expect(two_or_subsentences.push_or_down.in_text).to eq(expected)
           end
         end
       end
@@ -299,7 +295,33 @@ module Proposition
       context "when a sentence contains an AND operator" do
 
         it "should throw an exception" do
-          expect{ a_and_b.to_clause }.to raise_error("to_clause called on sentence containing AND operator")
+          expect{ a_and_b.to_clause }.to raise_error("to_clause called on sentence containing operator other than OR")
+        end
+      end
+
+      context "with an XOR operator" do
+        let(:a_xor_b) { CompoundSentence.new(a, Logic::XOR, b) }
+
+        it "should throw an exception" do
+          expect{ a_xor_b.to_clause }.to raise_error("to_clause called on sentence containing operator other than OR")
+        end
+      end
+
+      context "without complex operators or AND" do
+        let(:subject) { CompoundSentence.new(a_or_b, Logic::OR, c_or_d) }
+        let(:expected) { "(A OR B OR C OR D)" }
+
+        it "should contain the components as literals" do
+          expect(subject.to_clause.in_text).to eq(expected)
+        end
+      end
+
+      context "with a negated sentence" do
+        let(:subject) { CompoundSentence.new(a_and_b, Logic::NOT)}
+        let(:expected) { "(NOT A OR NOT B)" }
+
+        it "should push not down and return the result in clause form" do
+          expect(subject.to_clause.in_text).to eq(expected)
         end
       end
     end
