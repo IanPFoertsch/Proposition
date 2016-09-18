@@ -31,5 +31,9 @@ module Proposition
     def distribute(sentence, operator)
       push_not_down.distribute(sentence, operator)
     end
+
+    def is_unary?
+      true
+    end
   end
 end

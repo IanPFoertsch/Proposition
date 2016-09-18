@@ -21,7 +21,7 @@ module Proposition
           model[sentence.symbol]
         end
       elsif sentence.is_unary?
-        apply_operator(model, sentence.left, sentence.operator)
+        apply_operator(model, sentence.sentence, Logic::NOT)
       else
         apply_operator(model, sentence.left, sentence.operator, sentence.right)
       end

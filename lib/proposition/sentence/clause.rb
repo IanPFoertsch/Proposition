@@ -5,7 +5,5 @@ module Proposition
     def initialize(input, operator=nil)
 
     end
-
   end
-
 end

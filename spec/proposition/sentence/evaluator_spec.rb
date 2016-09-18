@@ -47,11 +47,11 @@ module Proposition
             end
           end
         end
-        context "given a compound unary sentence" do
-          let(:compound_sentence) { CompoundSentence.new(true_sentence, Logic::NOT)}
+        context "given a negated sentence" do
+          let(:negated) { NegatedSentence.new(true_sentence)}
 
           it "should negate a unary sentence with a false operator" do
-            expect(evaluator.evaluate(compound_sentence, model)).to eq(false)
+            expect(evaluator.evaluate(negated, model)).to eq(false)
           end
         end
 
