@@ -14,7 +14,7 @@ module Proposition
     let(:c_or_d) { CompoundSentence.new(c, Logic::OR, d) }
 
     let(:not_sentence) { CompoundSentence.new(a, Logic::NOT) }
-    let (:compound_sentence) {CompoundSentence.new(a, Logic::AND, b)}
+    let(:compound_sentence) {CompoundSentence.new(a, Logic::AND, b)}
     let(:a_and_b) { CompoundSentence.new(a, Logic::AND, b) }
     let(:c_implication_d) { CompoundSentence.new(c, Logic::IMPLICATION, d) }
 

@@ -27,7 +27,7 @@ module Proposition
       end
     end
 
-    describe "negate" do
+    describe "distribute_not" do
 
       describe "Associative operators" do
         normal_operator_map = {
@@ -37,13 +37,13 @@ module Proposition
           Logic::BICONDITIONAL => Logic::XOR
         }
 
-        normal_operator_map.each do |operator, negated_op|
-          it "should negate a CompoundSentence recursively}" do
+        normal_operator_map.each do |operator, inverted_op|
+          it "should distribute_not into a CompoundSentence, altering the operator" do
             original = CompoundSentence.new(a, operator, b)
-            negated = original.negate
-            expect(negated.operator).to eq(negated_op)
-            expect(negated.left).to eq(a.negate)
-            expect(negated.right).to eq(b.negate)
+            inverted = original.distribute_not
+            expect(inverted.operator).to eq(inverted_op)
+            expect(inverted.left).to eq(a.negate)
+            expect(inverted.right).to eq(b.negate)
           end
         end
       end
@@ -52,30 +52,19 @@ module Proposition
         let(:implication_sentence) { CompoundSentence.new(a, Logic::IMPLICATION, b) }
 
         it "should negate an IMPLICATION sentence correctly" do
-          negated = implication_sentence.negate
+          inverted = implication_sentence.distribute_not
 
-          expect(negated.operator).to eq(Logic::AND)
-          expect(negated.left).to eq(a)
-          expect(negated.right).to eq(b.negate)
-        end
-      end
-
-      describe "Not-operator" do
-        it "should remove the NOT operator and lift the sub-sentence" do
-          expect(not_sentence.negate).to eq(a)
+          expect(inverted.operator).to eq(Logic::AND)
+          expect(inverted.left).to eq(a)
+          expect(inverted.right).to eq(b.negate)
         end
       end
     end
 
     describe "in_text" do
       let(:a_and_b_text) { "(A AND B)" }
-      let(:not_sentence_text) { "(NOT A)" }
       let(:c_implication_d_text) { "(C IMPLICATION D)" }
       let(:compound_text) { "(" + a_and_b_text + " XOR " + c_implication_d_text + ")"}
-
-      it "should operate on a sentence with a NOT operator" do
-        expect(not_sentence.in_text).to eq(not_sentence_text)
-      end
 
       it "should operate on a shallow compound sentence" do
         expect(a_and_b.in_text).to eq(a_and_b_text)
@@ -87,26 +76,15 @@ module Proposition
     end
 
     describe "push_not_down" do
-      context "shallow NOT sentence" do
-        it "should return the negated sub_sentence" do
-          expect(not_sentence.push_not_down).to eq(a.negate)
-        end
+      let(:subject) { CompoundSentence.new(a, Logic::AND, b)}
+      it "should recursively push not down" do
+        expect(a).to receive(:push_not_down)
+        expect(b).to receive(:push_not_down)
+        subject.push_not_down
       end
 
-      context "demorgan's negation" do
-        let(:not_a_and_b) { CompoundSentence.new(a_and_b, Logic::NOT) }
-        let(:expected_text) { "(NOT A OR NOT B)" }
-        it "should recursively push not down" do
-          expect(not_a_and_b.push_not_down.in_text).to eq(expected_text)
-        end
-      end
-
-      context "deep recursive operation" do
-        let(:not_complex_compound) { CompoundSentence.new(complex_compound, Logic::NOT) }
-        let(:expected_text) { "((NOT A OR NOT B) BICONDITIONAL (C AND NOT D))" }
-        it "should recursively push not down" do
-          expect(not_complex_compound.push_not_down.in_text).to eq(expected_text)
-        end
+      it "should not change the operator" do
+        expect(subject.push_not_down.operator).to eq(subject.operator)
       end
     end
 
@@ -162,10 +140,11 @@ module Proposition
 
       context "XOR" do
         let(:xor_sentence) { CompoundSentence.new(a, Logic::XOR, b) }
-        let(:result_text) { "((A AND NOT B) OR (NOT A AND B))" }
+        let(:not_a_and_b) { NegatedSentence.new(a_and_b)}
+        let(:expectation) { CompoundSentence.new(a_or_b, Logic::AND, not_a_and_b)}
         it "should eliminate XOR" do
           eliminated = xor_sentence.eliminate_operator(Logic::XOR)
-          expect(eliminated.in_text).to eq(result_text)
+          expect(eliminated).to eq(expectation)
         end
       end
 
@@ -173,11 +152,12 @@ module Proposition
         let(:biconditional_sentence) do
           CompoundSentence.new(a, Logic::BICONDITIONAL, b)
         end
-        let(:result_text) { "((NOT A OR B) AND (A OR NOT B))" }
-        it "should eliminate XOR" do
-          eliminated = biconditional_sentence.eliminate_operator(Logic::BICONDITIONAL)
+        let(:not_a_or_b) { NegatedSentence.new(a_or_b) }
+        let(:expectation) { CompoundSentence.new(a_and_b, Logic::OR, not_a_or_b) }
 
-          expect(eliminated.in_text).to eq(result_text)
+        it "should eliminate BICONDITIONAL" do
+          eliminated = biconditional_sentence.eliminate_operator(Logic::BICONDITIONAL)
+          expect(eliminated).to eq(expectation)
         end
       end
 
@@ -200,21 +180,6 @@ module Proposition
           let(:expected_text) { "((C OR A) AND (C OR B))" }
           it "should distribute 'c OR' into 'a AND b''" do
             expect(a_and_b.distribute(c, operator).in_text).to eq(expected_text)
-          end
-        end
-
-        context "with a unary compound sentence" do
-          let(:expected_text) { "(C OR NOT A)" }
-          it "should distribute to  '(C OR NOT A)' " do
-            expect(not_sentence.distribute(c, operator).in_text).to eq(expected_text)
-          end
-        end
-
-        context "with a compound sentence of form NOT(B OR D)" do
-          let(:negated_a_and_b) { CompoundSentence.new(a_and_b, Logic::NOT)}
-          let(:expected_text) { "((C OR NOT A) OR (C OR NOT B))" }
-          it "should" do
-            expect(negated_a_and_b.distribute(c, operator).in_text).to eq(expected_text)
           end
         end
       end
@@ -312,15 +277,6 @@ module Proposition
         let(:expected) { "(A OR B OR C OR D)" }
 
         it "should contain the components as literals" do
-          expect(subject.to_clause.in_text).to eq(expected)
-        end
-      end
-
-      context "with a negated sentence" do
-        let(:subject) { CompoundSentence.new(a_and_b, Logic::NOT)}
-        let(:expected) { "(NOT A OR NOT B)" }
-
-        it "should push not down and return the result in clause form" do
           expect(subject.to_clause.in_text).to eq(expected)
         end
       end

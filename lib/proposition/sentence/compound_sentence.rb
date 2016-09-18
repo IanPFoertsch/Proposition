@@ -16,13 +16,7 @@ module Proposition
       true
     end
 
-    def deep_copy
-      Marshal.load(Marshal.dump(self))
-    end
-
-    def negate
-      return @left.deep_copy if @operator == Logic::NOT
-
+    def distribute_not
       negated_left = @left.negate
       negated_right = @right.negate
       operator = case @operator
@@ -58,21 +52,13 @@ module Proposition
     end
 
     def in_text
-      if @operator == Logic::NOT
-        "(#{@operator} #{@left.in_text})"
-      else
-        "(#{@left.in_text} #{@operator} #{@right.in_text})"
-      end
+      "(#{@left.in_text} #{@operator} #{@right.in_text})"
     end
 
     def push_not_down
-      if @operator == Logic::NOT
-        @left.negate.push_not_down
-      else #this is a compound, non-unary sentence
-        left = @left.push_not_down
-        right = @right.push_not_down
-        CompoundSentence.new(left, @operator, right)
-      end
+      left = @left.push_not_down
+      right = @right.push_not_down
+      CompoundSentence.new(left, @operator, right)
     end
 
     def push_or_down
@@ -90,9 +76,10 @@ module Proposition
         raise "push_operator_down called for #{operator}, should only be used for AND or OR"
       end
 
-      if self.is_unary?
-        self.push_not_down.push_operator_down(operator)
-      elsif @operator == operator
+      #TODO: RE-IMPLEMENT the commented sections in the NegatedSentence class
+      # if self.is_unary?
+      #   self.push_not_down.push_operator_down(operator)
+      if @operator == operator
         if !@right.is_atomic?
           distribute_and_push(operator)
         elsif !@left.is_atomic? && @right.is_atomic?
@@ -107,16 +94,20 @@ module Proposition
       end
     end
 
+    def push_and_down
+      if @operator == Logic::AND
+        @right.distribute(@left.deep_copy, @operator)
+      else
+        CompoundSentence.new(@left.push_and_down, @operator, @right.push_and_down)
+      end
+    end
+
     #distributes the input sentence and operator into this sentence,
     #forming a new compound sentence
     def distribute(sentence, operator)
-      if @operator != Logic::NOT
-        new_left = CompoundSentence.new(sentence, operator, @left)
-        new_right = CompoundSentence.new(sentence, operator, @right)
-        CompoundSentence.new(new_left, @operator, new_right)
-      else
-        self.push_not_down.distribute(sentence, operator)
-      end
+      new_left = CompoundSentence.new(sentence, operator, @left)
+      new_right = CompoundSentence.new(sentence, operator, @right)
+      CompoundSentence.new(new_left, @operator, new_right)
     end
 
     #wrapper method for which sub-sentence we should distribute into which
@@ -153,26 +144,22 @@ module Proposition
         raise "eliminate_operator called for AND or OR, should only be used for
           XOR, IMPLICATION, or BICONDITIONAL"
       end
-      if is_unary? # if sentence.is_unary? => operator is not, recurse on left sub
-        return @left.eliminate_operator(@operator)
-      elsif @operator == operator # sentence is binary compound
+      if @operator == operator # sentence is binary compound
         case operator
         when Logic::IMPLICATION
           negated_recursed_left = @left.eliminate_operator(operator).negate
           recursed_right = @right.eliminate_operator(operator)
           return CompoundSentence.new(negated_recursed_left, Logic::OR, recursed_right)
         when Logic::XOR
-          biconditional = CompoundSentence.new(@left, Logic::BICONDITIONAL, @right)
-          eliminated = biconditional.eliminate_operator(Logic::BICONDITIONAL)
-          return eliminated.negate
+          left = CompoundSentence.new(@left.deep_copy, Logic::OR, @right.deep_copy)
+          right = CompoundSentence.new(@left.deep_copy, Logic::AND, @right.deep_copy).negate
+
+          return CompoundSentence.new(left, Logic::AND, right).eliminate_operator(Logic::XOR)
         when Logic::BICONDITIONAL
-          recursed_left = @left.eliminate_operator(operator)
-          recursed_right = @right.eliminate_operator(operator)
+          left = CompoundSentence.new(@left.deep_copy, Logic::AND, @right.deep_copy)
+          right = CompoundSentence.new(@left.deep_copy, Logic::OR, @right.deep_copy).negate
 
-          compound_left = CompoundSentence.new(recursed_left.negate, Logic::OR, recursed_right)
-          compound_right = CompoundSentence.new(recursed_left, Logic::OR, recursed_right.negate)
-
-          return CompoundSentence.new(compound_left, Logic::AND, compound_right)
+          return CompoundSentence.new(left, Logic::OR, right).eliminate_operator(Logic::BICONDITIONAL)
         else
           raise "unimplimented elimination operation"
         end
@@ -218,7 +205,5 @@ module Proposition
         CompoundSentence.new(@right.deep_copy, @operator, @left.deep_copy)
       end
     end
-
-
   end
 end
