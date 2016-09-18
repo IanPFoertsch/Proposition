@@ -12,4 +12,5 @@ module Proposition
   autoload  :CompoundSentence, 'proposition/sentence/compound_sentence'
   autoload  :Logic, 'proposition/sentence/logic'
   autoload  :Evaluator, 'proposition/sentence/evaluator'
+  autoload  :NegatedSentence, 'proposition/sentence/negated_sentence'
 end

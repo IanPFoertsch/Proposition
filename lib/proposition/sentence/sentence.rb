@@ -4,7 +4,7 @@ module Proposition
     def deep_copy
       Marshal.load(Marshal.dump(self))
     end
-    
+
     def is_atomic?
       false
     end
@@ -15,6 +15,10 @@ module Proposition
 
     def is_clause?
       false
+    end
+
+    def negate
+      NegatedSentence.new(self.deep_copy)
     end
   end
 end
