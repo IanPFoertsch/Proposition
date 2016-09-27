@@ -65,6 +65,7 @@ module Proposition
       push_operator_down(Logic::OR)
     end
 
+
     def push_and_down
       push_operator_down(Logic::AND)
     end
@@ -76,9 +77,6 @@ module Proposition
         raise "push_operator_down called for #{operator}, should only be used for AND or OR"
       end
 
-      #TODO: RE-IMPLEMENT the commented sections in the NegatedSentence class
-      # if self.is_unary?
-      #   self.push_not_down.push_operator_down(operator)
       if @operator == operator
         if !@right.is_atomic?
           distribute_and_push(operator)
@@ -94,13 +92,6 @@ module Proposition
       end
     end
 
-    def push_and_down
-      if @operator == Logic::AND
-        @right.distribute(@left.deep_copy, @operator)
-      else
-        CompoundSentence.new(@left.push_and_down, @operator, @right.push_and_down)
-      end
-    end
 
     #distributes the input sentence and operator into this sentence,
     #forming a new compound sentence
@@ -196,7 +187,19 @@ module Proposition
       @operator == operator || right || @left.contains_operator?(operator)
     end
 
+
+    def does_not_contain_operator?(operator)
+      return false if @operator == operator
+      return false if @right.does_not_contain_operator?(operator)
+      return false if @left.does_not_contain_operator?(operator)
+      true
+    end
+
     private
+
+    def unbalanced
+      !@left.is_atomic? && @right.is_atomic?
+    end
 
     def rotate
       if self.is_unary?

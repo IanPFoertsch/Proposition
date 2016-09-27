@@ -121,7 +121,7 @@ module Proposition
           end
         end
       end
-    end
+     end
 
     describe "eliminate_binary_operator" do
       let(:implication_sentence) do
@@ -239,7 +239,7 @@ module Proposition
       end
     end
 
-    context "contains_operator" do
+    describe "contains_operator" do
       let(:c_and_d) { CompoundSentence.new(c, Logic::AND, d) }
       let(:a_or_c_and_d) { CompoundSentence.new(a, Logic::OR, c_and_d) }
 

@@ -3,6 +3,7 @@ module Proposition
 
     attr_reader :sentence
 
+
     def initialize(sentence)
       @sentence = sentence
     end

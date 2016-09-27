@@ -58,6 +58,10 @@ module Proposition
       self
     end
 
+    def push_and_down
+      self
+    end
+
     def retrieve_atomic_components
       [self]
     end
