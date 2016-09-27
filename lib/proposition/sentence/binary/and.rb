@@ -15,16 +15,16 @@ module Proposition
     end
 
     def should_distribute_and?
-      return @left.contains_or? || @right.contains_and?
+      return @left.contains_or? || @right.contains_or?
     end
 
     def push_and_down
       return self unless should_distribute_and?
       #first pre-process the left and right subsentences
       if @left.should_distribute_and?
-        return Or.new(@left.push_and_down, @right).push_and_down
+        return And.new(@left.push_and_down, @right).push_and_down
       elsif @right.should_distribute_and?
-        return Or.new(@left, @right.push_and_down).push_and_down
+        return And.new(@left, @right.push_and_down).push_and_down
       else
         if @left.is_atomic? #base case of both atomic components caught by "should_distribute_and"
           return @right.distribute_and(left).push_and_down
