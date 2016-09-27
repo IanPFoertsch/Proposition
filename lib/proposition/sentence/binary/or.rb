@@ -14,6 +14,11 @@ module Proposition
       true
     end
 
+    def to_clause
+      left_clause = @left.to_clause
+      right_clause = @right.to_clause
+      left_clause.join(right_clause)
+    end
 
     def should_distribute_or?
       return @left.contains_and? || @right.contains_and?
@@ -21,7 +26,7 @@ module Proposition
 
     def push_or_down
       return self unless should_distribute_or?
-      #first pre-process the left and right subsentences
+      #TODO: Can we eliminate this tell/ask block here?
       if @left.should_distribute_or?
         return Or.new(@left.push_or_down, @right).push_or_down
       elsif @right.should_distribute_or?

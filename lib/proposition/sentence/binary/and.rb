@@ -19,6 +19,8 @@ module Proposition
     end
 
     def push_and_down
+      #TODO: This is almost an exact duplicateof logic in push_or_down in the
+      #or sentence class. Figure out a way to consolidate + reuse this logic
       return self unless should_distribute_and?
       #first pre-process the left and right subsentences
       if @left.should_distribute_and?
