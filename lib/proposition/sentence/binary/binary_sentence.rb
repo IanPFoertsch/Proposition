@@ -1,5 +1,6 @@
+require_relative "../sentence"
 module Proposition
-  class BinarySentence
+  class BinarySentence < Sentence
     attr_reader :left, :right
 
     def initialize(left, right)
@@ -9,6 +10,10 @@ module Proposition
 
     def in_text
       return "(#{left.in_text} #{self.operator_symbol} #{right.in_text})"
+    end
+
+    def operator_symbol
+      "BINARY SENTENCE"
     end
 
     def distribute_or(sentence)
@@ -24,7 +29,7 @@ module Proposition
     end
 
     def push_not_down
-      return carry_operation_down(:push_not_down)
+      carry_operation_down(:push_not_down)
     end
 
     def ==(other)
@@ -39,6 +44,22 @@ module Proposition
 
     def push_and_down
       carry_operation_down(:push_and_down)
+    end
+
+    def is_atomic?
+      false
+    end
+
+    def rotate
+      self.class.new(@right, @left)
+    end
+
+    def contains_or?
+      @left.contains_or? || @right.contains_or?
+    end
+
+    def contains_and?
+      @left.contains_and? || @right.contains_and?
     end
 
     private

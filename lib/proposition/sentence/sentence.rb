@@ -20,5 +20,21 @@ module Proposition
     def negate
       NegatedSentence.new(self.deep_copy)
     end
+
+    def contains_or?
+      false
+    end
+
+    def contains_and?
+      false
+    end
+
+    def should_distribute_or?
+      false
+    end
+
+    def should_distribute_and?
+      false
+    end
   end
 end

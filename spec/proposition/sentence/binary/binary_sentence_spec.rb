@@ -9,8 +9,11 @@ module Proposition
   RSpec.describe BinarySentence do
     let(:a) { AtomicSentence.new("a") }
     let(:b) { AtomicSentence.new("b") }
-    let(:binary_sentence) { BinarySentence.new(a, b) }
     let(:c) { AtomicSentence.new("c") }
+    let(:d) { AtomicSentence.new("d") }
+    let(:binary_sentence) { BinarySentence.new(a, b) }
+    let(:a_and_b) { And.new(a, b)}
+    let(:c_or_d) { And.new(c, d)}
 
     describe "distribute_or" do
       let(:c) { AtomicSentence.new("c") }
@@ -106,6 +109,12 @@ module Proposition
             expect(binary_sentence).to eq(other)
           end
         end
+      end
+    end
+
+    describe "rotate" do
+      it "should return a new sentence with reversed left and right subsentences" do
+        expect(binary_sentence.rotate).to eq(BinarySentence.new(b, a))
       end
     end
   end
