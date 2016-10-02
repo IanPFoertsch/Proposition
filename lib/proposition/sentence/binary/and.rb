@@ -2,7 +2,7 @@ require_relative "binary_sentence"
 
 module Proposition
   class And < BinarySentence
-    def self.compliment
+    def compliment
       Or
     end
 
@@ -12,6 +12,19 @@ module Proposition
 
     def contains_and?
       true
+    end
+
+    def to_conjunction_of_disjunctions
+      @left.to_conjunction_of_disjunctions.conjoin(@right.to_conjunction_of_disjunctions)
+    end
+
+    #TODO this logic is replicated everywhere we are creating CNF sentences,
+    #consolidate this into a module
+    def to_conjunctive_normal_form
+      push_not_down
+        .push_or_down
+        .to_conjunction_of_disjunctions
+        .to_conjunctive_normal_form
     end
 
     def should_distribute_and?
@@ -29,11 +42,11 @@ module Proposition
         return And.new(@left, @right.push_and_down).push_and_down
       else
         if @left.is_atomic? #base case of both atomic components caught by "should_distribute_and"
-          return @right.distribute_and(left).push_and_down
+          return @right.distribute_and(@left).push_and_down
         elsif @right.is_atomic?
           return rotate.push_and_down
         else # both are non-atomic, we contain an and and should distribute
-          @right.distribute_and(left).push_and_down
+          @right.distribute_and(@left).push_and_down
         end
       end
     end

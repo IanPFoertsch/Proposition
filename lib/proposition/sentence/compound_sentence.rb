@@ -163,19 +163,19 @@ module Proposition
       end
     end
 
-    def to_clause
+    def to_disjunction
       if is_unary?
-        self.push_not_down.to_clause
+        self.push_not_down.to_disjunction
       elsif contains_operator?(Logic::AND) ||
         contains_operator?(Logic::XOR) ||
         contains_operator?(Logic::IMPLICATION) ||
         contains_operator?(Logic::BICONDITIONAL)
-        raise "to_clause called on sentence containing operator other than OR"
+        raise "to_disjunction called on sentence containing operator other than OR"
       else
         working_copy = self.push_not_down
 
-        left_clauses = working_copy.left.to_clause.retrieve_atomic_components
-        right_clauses = working_copy.right.to_clause.retrieve_atomic_components
+        left_clauses = working_copy.left.to_disjunction.retrieve_atomic_components
+        right_clauses = working_copy.right.to_disjunction.retrieve_atomic_components
 
         return NArySentence.new(Logic::OR, left_clauses + right_clauses)
       end

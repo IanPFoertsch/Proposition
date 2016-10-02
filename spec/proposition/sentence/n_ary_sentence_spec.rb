@@ -26,7 +26,7 @@ module Proposition
       end
 
       context "for an atomic sentence in clause form" do
-        let(:a_clause) { a.to_clause }
+        let(:a_clause) { a.to_disjunction }
         it "should be a clause" do
           expect(a_clause.is_clause?).to eq(true)
         end
@@ -68,8 +68,8 @@ module Proposition
         end
 
         context "with contradictory literals" do
-          let(:not_a_clause) { a.negate.to_clause }
-          let(:a_clause) { a.to_clause }
+          let(:not_a_clause) { a.negate.to_disjunction }
+          let(:a_clause) { a.to_disjunction }
 
           it "should remove contradictory literals" do
             expect(a_clause.resolve(not_a_clause).empty?).to eq(true)
@@ -79,12 +79,12 @@ module Proposition
 
       context "resolve" do
         it "should add sentences which are not already present" do
-          added = clause.resolve(d.to_clause)
+          added = clause.resolve(d.to_disjunction)
           expect(added.sentences.include?(d)).to be(true)
         end
 
         it "should remove contradictory sentences" do
-          added = clause.resolve(a.negate.to_clause)
+          added = clause.resolve(a.negate.to_disjunction)
           expect(added.sentences).not_to include(a)
           [b,c].each do |item|
             expect(added.sentences).to include(item)
@@ -92,7 +92,7 @@ module Proposition
         end
 
         it "should return the sentence unchanged when given a redundant sentence to add" do
-          expect(clause.resolve(a.to_clause)).to eq(clause)
+          expect(clause.resolve(a.to_disjunction)).to eq(clause)
         end
       end
     end

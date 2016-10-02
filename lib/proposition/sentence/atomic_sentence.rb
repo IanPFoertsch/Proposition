@@ -1,4 +1,6 @@
 
+require_relative "n_ary/clause"
+
 module Proposition
   class AtomicSentence < Sentence
     attr_reader :symbol, :truth, :operator
@@ -78,16 +80,12 @@ module Proposition
       return self
     end
 
-    def distribute(sentence, operator)
-      return CompoundSentence.new(sentence, operator, self.deep_copy)
-    end
-
     def push_operator_down(operator)
       return self
     end
 
-    def to_clause
-      NArySentence.new(Logic::OR, self.deep_copy)
+    def to_disjunction
+      Clause.new([self])
     end
 
     def atomic_components
@@ -96,6 +94,10 @@ module Proposition
 
     def contains_operator?(operator)
       return !@operator.nil? && @operator == operator && operator == Logic::NOT
+    end
+
+    def to_conjunction_of_disjunctions
+      Conjunction.new([to_disjunction])
     end
   end
 end

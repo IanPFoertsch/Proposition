@@ -1,4 +1,6 @@
 require_relative "binary_sentence"
+require_relative "../n_ary/clause"
+require_relative "../n_ary/conjunctive_normal_form"
 
 module Proposition
   class Or < BinarySentence
@@ -14,10 +16,20 @@ module Proposition
       true
     end
 
-    def to_clause
-      left_clause = @left.to_clause
-      right_clause = @right.to_clause
-      left_clause.join(right_clause)
+    def to_disjunction
+      left_clause = @left.to_disjunction
+      right_clause = @right.to_disjunction
+      left_clause.conjoin(right_clause)
+    end
+
+    def to_conjunction_of_disjunctions
+      Conjunction.new([to_disjunction])
+    end
+
+    def to_conjunctive_normal_form
+      push_not_down
+        .push_or_down
+        .to_conjunction_of_disjunctions
     end
 
     def should_distribute_or?

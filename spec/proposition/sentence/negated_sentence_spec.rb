@@ -25,11 +25,8 @@ module Proposition
       end
     end
 
-    describe "distribute" do
-      let(:expectation) {a_or_b.distribute_not.distribute(c, Logic::AND)}
-      it "should push not down first, then distribute into the result" do
-        expect(negated_sentence.distribute(c, Logic::AND)).to eq(expectation)
-      end
+    describe "distribute_or" do
+      
     end
   end
 end

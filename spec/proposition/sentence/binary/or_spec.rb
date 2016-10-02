@@ -4,6 +4,8 @@ require_relative "../../../../lib/proposition/sentence/sentence"
 require_relative "../../../../lib/proposition/sentence/atomic_sentence"
 require_relative "../../../../lib/proposition/sentence/binary/or"
 require_relative "../../../../lib/proposition/sentence/binary/and"
+require_relative "../../../../lib/proposition/sentence/n_ary/clause"
+require_relative "../../../../lib/proposition/sentence/n_ary/conjunctive_normal_form"
 
 module Proposition
   RSpec.describe Or do
@@ -76,6 +78,44 @@ module Proposition
           end
         end
       end
+    end
+
+    describe "to_disjunction" do
+      context "with a single shallow sentence" do
+        it "should return a clause instance" do
+          expect(a_or_b.to_disjunction).to be_a(Disjunction)
+        end
+        it "should conjoin the clauses returned from the atomic sentences" do
+          expect(a_or_b.to_disjunction.sentences).to include(a, b)
+        end
+      end
+      context "with a multilevel or statement" do
+        let(:multilevel_or) {Or.new(a_or_b, c_or_d)}
+
+        it "should extract all of the atomic components to form a single clause" do
+          clause = multilevel_or.to_disjunction
+          expect(clause.sentences).to eq([a, b, c, d])
+        end
+      end
+    end
+
+    describe "distribute_not" do
+
+    end
+
+    describe "to_conjunction_of_disjunctions" do
+      context "with a shallow or statement" do
+        it "should return a CNF sentence" do
+          expect(a_or_b.to_conjunction_of_disjunctions).to be_a(Conjunction)
+        end
+
+        it "should return CNF sentence containing the sentence's clause form" do
+          sentences = a_or_b.to_conjunction_of_disjunctions.instance_variable_get(:@sentences)
+          expect(sentences[0] == a_or_b.to_disjunction).to be(true)
+        end
+      end
+
+
     end
   end
 end

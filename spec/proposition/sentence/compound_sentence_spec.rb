@@ -256,11 +256,11 @@ module Proposition
       end
     end
 
-    context "to_clause" do
+    context "to_disjunction" do
       context "when a sentence contains an AND operator" do
 
         it "should throw an exception" do
-          expect{ a_and_b.to_clause }.to raise_error("to_clause called on sentence containing operator other than OR")
+          expect{ a_and_b.to_disjunction }.to raise_error("to_disjunction called on sentence containing operator other than OR")
         end
       end
 
@@ -268,7 +268,7 @@ module Proposition
         let(:a_xor_b) { CompoundSentence.new(a, Logic::XOR, b) }
 
         it "should throw an exception" do
-          expect{ a_xor_b.to_clause }.to raise_error("to_clause called on sentence containing operator other than OR")
+          expect{ a_xor_b.to_disjunction }.to raise_error("to_disjunction called on sentence containing operator other than OR")
         end
       end
 
@@ -277,7 +277,7 @@ module Proposition
         let(:expected) { "(A OR B OR C OR D)" }
 
         it "should contain the components as literals" do
-          expect(subject.to_clause.in_text).to eq(expected)
+          expect(subject.to_disjunction.in_text).to eq(expected)
         end
       end
     end

@@ -4,6 +4,7 @@ require_relative "../../../../lib/proposition/sentence/sentence"
 require_relative "../../../../lib/proposition/sentence/atomic_sentence"
 require_relative "../../../../lib/proposition/sentence/binary/or"
 require_relative "../../../../lib/proposition/sentence/binary/and"
+require_relative "../../../../lib/proposition/sentence/negated_sentence"
 
 module Proposition
   RSpec.describe And do
@@ -73,6 +74,42 @@ module Proposition
           it "should recurse to the lowest level" do
             expect(rotated_and.push_and_down).to eq(expectation)
           end
+        end
+      end
+    end
+
+    describe "distribute_not" do
+      it "should perform demorgan negation resulting in an Or sentence" do
+        expect(a_and_b.distribute_not).to be_a(Or)
+      end
+
+      it "should negate the two constituent sentences" do
+        expect(a_and_b.instance_variable_get(:@right)).to receive(:negate)
+        expect(a_and_b.instance_variable_get(:@left)).to receive(:negate)
+        a_and_b.distribute_not
+      end
+    end
+
+    describe "to_conjunction_of_disjunctions" do
+      it "should return a conjunction type sentence" do
+        expect(a_and_b.to_conjunction_of_disjunctions).to be_a(Conjunction)
+      end
+
+      it "should conjoin the conjunction  representations of the left and right subsentences" do
+        clauses = a_and_b.to_conjunctive_normal_form.instance_variable_get(:@sentences)
+        expect(clauses.include?(Clause.new([a]))).to be(true)
+        expect(clauses.include?(Clause.new([b]))).to be(true)
+      end
+    end
+
+    describe "to_conjunctive_normal_form" do
+      context "with a negated sentence" do
+        #using a_or_b here due to the fact that we will perform demorgan's negation
+        #resulting an AND sentence when pushing negation downwards
+        #let(:subject) NegatedSentence.new(a_or_b)
+
+        it "should push the negation down into the atomic components" do
+          #puts subject.
         end
       end
     end

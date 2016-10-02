@@ -2,15 +2,22 @@ require_relative "../sentence"
 require_relative "../n_ary/clause.rb"
 module Proposition
   class BinarySentence < Sentence
-    attr_reader :left, :right
 
     def initialize(left, right)
       @left = left
       @right = right
     end
 
+    def left
+      @left.deep_copy
+    end
+
+    def right
+      @right.deep_copy
+    end
+
     def in_text
-      return "(#{left.in_text} #{self.operator_symbol} #{right.in_text})"
+      return "(#{@left.in_text} #{self.operator_symbol} #{@right.in_text})"
     end
 
     def operator_symbol
@@ -27,6 +34,10 @@ module Proposition
       new_left = And.new(sentence, @left)
       new_right = And.new(sentence, @right)
       self.class.new(new_left, new_right)
+    end
+
+    def distribute_not
+      compliment.new(@left.negate, @right.negate)
     end
 
     def push_not_down
