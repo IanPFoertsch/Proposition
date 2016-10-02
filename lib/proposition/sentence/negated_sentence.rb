@@ -1,3 +1,5 @@
+require_relative "sentence"
+
 module Proposition
   class NegatedSentence < Sentence
 
@@ -35,6 +37,10 @@ module Proposition
 
     def distribute_or(sentence)
       push_not_down.distribute_or(sentence)
+    end
+
+    def distribute_and(sentence)
+      push_not_down.distribute_and(sentence)
     end
   end
 end
