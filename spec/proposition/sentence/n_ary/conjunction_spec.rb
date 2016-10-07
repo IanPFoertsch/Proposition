@@ -1,16 +1,11 @@
-require_relative "../../../../lib/proposition/sentence/binary/binary_sentence"
-require_relative "../../../../lib/proposition/sentence/sentence"
-require_relative "../../../../lib/proposition/sentence/atomic_sentence"
-require_relative "../../../../lib/proposition/sentence/binary/or"
-require_relative "../../../../lib/proposition/sentence/binary/and"
-
-require_relative "../../../../lib/proposition/sentence/n_ary/conjunction"
+require 'spec_helper'
+require_relative '../../sentence_fixtures'
 
 module Proposition
   RSpec.describe Disjunction do
     describe "operator" do
       it "should return OR" do
-        expect(Conjunction.new([]).operator).to eq("OR")
+        expect(Conjunction.new([]).operator).to eq("AND")
       end
     end
   end

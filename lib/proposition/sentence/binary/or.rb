@@ -1,8 +1,3 @@
-require_relative "binary_sentence"
-require_relative "../n_ary/clause"
-require_relative "../n_ary/conjunctive_normal_form"
-require_relative "and"
-
 module Proposition
   class Or < BinarySentence
     def compliment

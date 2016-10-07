@@ -1,5 +1,3 @@
-require_relative "../sentence"
-require_relative "../n_ary/clause.rb"
 module Proposition
   class BinarySentence < Sentence
 

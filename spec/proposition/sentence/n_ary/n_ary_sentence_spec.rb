@@ -1,18 +1,9 @@
-require_relative "../../../../lib/proposition/sentence/binary/binary_sentence"
-require_relative "../../../../lib/proposition/sentence/sentence"
-require_relative "../../../../lib/proposition/sentence/atomic_sentence"
-require_relative "../../../../lib/proposition/sentence/binary/or"
-require_relative "../../../../lib/proposition/sentence/binary/and"
-
-require_relative "../../../../lib/proposition/sentence/n_ary/n_ary_sentence"
+require 'spec_helper'
+require_relative '../../sentence_fixtures'
 
 module Proposition
   RSpec.describe NArySentence do
-    let(:a) { AtomicSentence.new("a") }
-    let(:b) { AtomicSentence.new("b") }
-    let(:c) { AtomicSentence.new("c") }
-    let(:d) { AtomicSentence.new("d") }
-
+    include_context "sentence fixtures"
     describe "conjoin" do
 
       let(:n_ary_one) { NArySentence.new([a, b]) }

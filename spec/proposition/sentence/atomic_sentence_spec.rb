@@ -1,15 +1,10 @@
-require_relative "../../../lib/proposition/sentence/binary/binary_sentence"
-require_relative "../../../lib/proposition/sentence/sentence"
-
-require_relative "../../../lib/proposition/sentence/atomic_sentence"
-require_relative "../../../lib/proposition/sentence/binary/or"
-require_relative "../../../lib/proposition/sentence/binary/and"
-require_relative "../../../lib/proposition/sentence/n_ary/clause"
-require_relative "../../../lib/proposition/sentence/logic"
-
+require 'spec_helper'
+require_relative '../sentence_fixtures'
 
 module Proposition
   RSpec.describe AtomicSentence do
+    include_context "sentence fixtures"
+
     let(:a_symbol) { "A" }
     let(:atomic_sentence) { AtomicSentence.new(a_symbol) }
     let(:negated) { atomic_sentence.negate }

@@ -1,9 +1,5 @@
-require_relative "../../../../lib/proposition/sentence/binary/binary_sentence"
-require_relative "../../../../lib/proposition/sentence/sentence"
-
-require_relative "../../../../lib/proposition/sentence/atomic_sentence"
-require_relative "../../../../lib/proposition/sentence/binary/or"
-require_relative "../../../../lib/proposition/sentence/binary/and"
+require 'spec_helper'
+require_relative '../../sentence_fixtures'
 
 module Proposition
   RSpec.describe BinarySentence do

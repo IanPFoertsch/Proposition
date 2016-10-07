@@ -1,5 +1,3 @@
-require_relative "binary_sentence"
-
 module Proposition
   class And < BinarySentence
     def compliment
