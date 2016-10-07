@@ -1,7 +1,10 @@
+require_relative "sentence"
+
 module Proposition
   class NegatedSentence < Sentence
 
     attr_reader :sentence
+
 
     def initialize(sentence)
       @sentence = sentence
@@ -24,16 +27,20 @@ module Proposition
       @sentence.distribute_not.push_not_down
     end
 
-    def eliminate_operator(operator)
-      NegatedSentence.new(@sentence.eliminate_operator(operator))
+    def push_or_down
+      @sentence.distribute_not.push_or_down
     end
 
-    def distribute(sentence, operator)
-      push_not_down.distribute(sentence, operator)
+    def distribute_not
+      @sentence
     end
 
-    def is_unary?
-      true
+    def distribute_or(sentence)
+      push_not_down.distribute_or(sentence)
+    end
+
+    def distribute_and(sentence)
+      push_not_down.distribute_and(sentence)
     end
   end
 end

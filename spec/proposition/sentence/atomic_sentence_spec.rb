@@ -1,7 +1,10 @@
 require 'spec_helper'
+require_relative '../sentence_fixtures'
 
 module Proposition
   RSpec.describe AtomicSentence do
+    include_context "sentence fixtures"
+
     let(:a_symbol) { "A" }
     let(:atomic_sentence) { AtomicSentence.new(a_symbol) }
     let(:negated) { atomic_sentence.negate }
@@ -102,21 +105,13 @@ module Proposition
       end
     end
 
-    describe "distribute" do
-      let(:b) { AtomicSentence.new("B") }
-      let(:expected) { "(B OR A)" }
-      it "should return a new complex sentence of the form: (B OR A)" do
-        expect(atomic_sentence.distribute(b, Logic::OR).in_text).to eq(expected)
-      end
-    end
-
-    describe "clause" do
+    describe "to_disjunction" do
       it "should return a single-element NArySentence" do
-        expect(atomic_sentence.to_clause).to be_a(NArySentence)
+        expect(atomic_sentence.to_disjunction).to be_a(Clause)
       end
 
       it "should contain a copy of the atomic literal" do
-        expect(atomic_sentence.to_clause.sentences[0]).to eq(atomic_sentence)
+        expect(atomic_sentence.to_disjunction.sentences[0]).to eq(atomic_sentence)
       end
     end
 
