@@ -8,7 +8,6 @@ module Proposition
   autoload  :Token, 'proposition/lexer/token'
   autoload  :Processor, 'proposition/operators/processor'
   autoload  :AtomicSentence, 'proposition/sentence/atomic_sentence'
-  autoload  :CompoundSentence, 'proposition/sentence/compound_sentence'
   autoload  :Logic, 'proposition/sentence/logic'
   autoload  :Evaluator, 'proposition/sentence/evaluator'
   autoload  :NegatedSentence, 'proposition/sentence/negated_sentence'

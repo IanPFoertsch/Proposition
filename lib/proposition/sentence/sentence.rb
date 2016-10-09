@@ -5,11 +5,8 @@ module Proposition
       Marshal.load(Marshal.dump(self))
     end
 
+    #TODO: Remove this is_x? booleans
     def is_atomic?
-      false
-    end
-
-    def is_compound?
       false
     end
 
