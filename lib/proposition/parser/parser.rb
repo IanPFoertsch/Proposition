@@ -13,8 +13,6 @@ module Proposition
       model
     end
 
-    def self.build_sentence(input_string)
-
-    end
+    
   end
 end

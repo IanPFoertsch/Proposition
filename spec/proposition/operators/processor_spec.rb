@@ -5,5 +5,6 @@ module Proposition
     include_context "sentence fixtures"
 
     let(:query) { c }
+    
   end
 end
