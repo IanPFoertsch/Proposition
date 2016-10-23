@@ -1,6 +1,4 @@
-
 module Proposition
-  class Parser
-
+  class Parenthesis < Token
   end
 end
