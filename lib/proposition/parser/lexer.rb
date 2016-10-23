@@ -1,11 +1,12 @@
 module Proposition
   class Lexer
 
-    L_PARENTHESIS = "("
-    R_PARENTHESIS = ")"
+    OPEN_PARENTHESIS = "("
+    CLOSE_PARENTHESIS = ")"
 
     SLASH = "/"
     WHITESPACE = [" ", "\n" "\t"]
+    OPERATORS = ["and", "or", "xor", "=>", "<=>"]
 
 
     def initialize(input)
@@ -13,14 +14,28 @@ module Proposition
       @current = 0
     end
 
-
     def next_token
-      if current_is_character?
-        return consume_characters
-      elsif current_is_whitespace?
+      if current_is_whitespace?
         consume_whitespace
         next_token
+      elsif current_is_character?
+        string = consume_characters
+        if is_operator?(string)
+          Operator.new(string)
+        else
+          Atom.new(string)
+        end
+      elsif current_is_parenthesis?
+        return Parenthesis.new(consume_current)
+      else
+        raise "No rule defined for character #{current}"
       end
+    end
+
+
+
+    def is_operator?(string)
+      OPERATORS.include?(string)
     end
 
     def consume_characters
@@ -30,6 +45,10 @@ module Proposition
       end
 
       identifier
+    end
+
+    def current_is_parenthesis?
+      current == OPEN_PARENTHESIS || current == CLOSE_PARENTHESIS
     end
 
     def current_is_whitespace?
@@ -56,6 +75,9 @@ module Proposition
     def current_is_character?
       #matches any alphanumeric
       result = current =~ /[A-Za-z_]/
+      #if non-alphanumeric, checks for operator symbols such as
+      #=> or <=>
+      result || current =~ /[<=>]/
     end
 
     def current_is_numeric?
