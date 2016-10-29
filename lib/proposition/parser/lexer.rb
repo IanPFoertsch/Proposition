@@ -14,7 +14,7 @@ module Proposition
     end
 
     def look_ahead(n) #look ahead into the token queue n tokens
-      @token_queue[n].clone
+      @token_queue[n] ? @token_queue[n].clone : nil
     end
 
     def get_next_token
@@ -29,18 +29,12 @@ module Proposition
       @current = 0
       queue = []
 
-      while has_more_tokens
+      while @current <= (@characters.length - 1)
         queue.push(next_token)
       end
 
       queue
     end
-
-    def has_more_tokens
-      @current <= (@characters.length - 1)
-    end
-
-
 
     def next_token
       if current_is_whitespace?
@@ -48,7 +42,7 @@ module Proposition
         next_token
       elsif current_is_character?
         string = consume_characters
-        if is_operator?(string)
+        if current_is_operator?(string)
           Operator.new(string)
         else
           Atom.new(string)
@@ -60,19 +54,6 @@ module Proposition
       end
     end
 
-    def is_operator?(string)
-      OPERATORS.include?(string)
-    end
-
-    def consume_characters
-      identifier = ""
-      while current_is_character? || current_is_numeric?
-        identifier += consume_current
-      end
-
-      identifier
-    end
-
     def current_is_parenthesis?
       current_character == OPEN_PARENTHESIS || current_character == CLOSE_PARENTHESIS
     end
@@ -81,21 +62,8 @@ module Proposition
       WHITESPACE.include?(current_character)
     end
 
-    def consume_whitespace
-      while current_is_whitespace?
-        @current += 1
-      end
-    end
-
-    def consume_current
-      character = current_character
-      @current += 1
-
-      character
-    end
-
-    def identifier?
-      character? || numeric?
+    def current_is_operator?(string)
+      OPERATORS.include?(string)
     end
 
     def current_is_character?
@@ -110,8 +78,26 @@ module Proposition
       current_character =~ /[0-9]/
     end
 
-    def parenthesis?
-      current_character == "(" || current_character == ")"
+    def consume_characters
+      identifier = ""
+      while current_is_character? || current_is_numeric?
+        identifier += consume_current
+      end
+
+      identifier
+    end
+
+    def consume_whitespace
+      while current_is_whitespace?
+        @current += 1
+      end
+    end
+
+    def consume_current
+      character = current_character
+      @current += 1
+
+      character
     end
 
     def current_character

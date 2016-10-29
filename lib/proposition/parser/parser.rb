@@ -4,50 +4,71 @@ module Proposition
       @input = input
     end
 
-    def parse
-      consume()
-      while look_ahead
-        #match the tokens:
+    def lexer
+      @lexer ||= Lexer.new(@input)
+    end
 
-        unless match_atom(look_ahead)
-          raise "Parse Error"
-        end
+    def parse
+      while lexer.look_ahead(0)
+        parse_sentence
       end
     end
 
     def parse_sentence
-      #either match an atom, or a binary sentence
-      match_atom(token)
-      match_operator(token)
-      match_atom(token)
-    end
+      next_token = lexer.look_ahead(0)
 
-    def match_atom(token)
-      if token.is_a?(Atom)
-        consume()
-        return true
-      else
-        false
+      case next_token
+      when Atom
+        parse_atomic_or_binary_sentence
+      when Parenthesis
+        parse_within_parenthesis(:parse_atomic_or_binary_sentence)
       end
     end
 
-
-
-    def look_ahead
-      #build a queue of lookahead tokens
-      @look_ahead
-    end
-
-    def consume
-      if lexer.has_more_tokens
-        @look_ahead = lexer.next_token
+    def parse_atomic_or_binary_sentence
+      current = lexer.look_ahead(0)
+      next_token = lexer.look_ahead(1)
+      if current.is_a?(Atom) && next_token.is_a?(Operator)
+        parse_binary_sentence
       else
-        @look_ahead = nil
+        parse_atomic_sentence
       end
     end
 
-    def lexer
-      @lexer ||= Lexer.new(@input)
+    def parse_atomic_sentence
+      atom = lexer.get_next_token
+      unless atom.is_a?(Atom)
+        raise "ParseError: Expecting an operator"
+      end
+    end
+
+    def parse_binary_sentence
+      parse_atomic_sentence
+      parse_operator
+      parse_atomic_sentence
+    end
+
+    def parse_operator
+      operator = lexer.get_next_token
+      unless operator.is_a?(Operator)
+        raise "ParseError: Expecting an operator"
+      end
+    end
+
+    def parse_within_parenthesis(method)
+      #our current token will be a parenthesis,
+      #so we need to consume the parenthesis
+      open_parenthesis = lexer.get_next_token
+      unless open_parenthesis.is_a?(Parenthesis) &&
+        open_parenthesis.string == "("
+        raise "ParseError: Expecting token '('"
+      end
+      self.send(method)
+      close_parenthesis = lexer.get_next_token
+      unless close_parenthesis.is_a?(Parenthesis) &&
+        close_parenthesis.string == ")"
+        raise "ParseError: Expecting token ')'"
+      end
     end
   end
 end
