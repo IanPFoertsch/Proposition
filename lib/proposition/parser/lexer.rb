@@ -10,9 +10,37 @@ module Proposition
 
 
     def initialize(input)
+      @token_queue = build_token_queue(input)
+    end
+
+    def look_ahead(n) #look ahead into the token queue n tokens
+      @token_queue[n].clone
+    end
+
+    def get_next_token
+      @token_queue.shift
+    end
+
+    private
+
+    def build_token_queue(input)
+      #TODO: Clean up this nonsensical looping and initialization
       @characters = input.chars #split by whitespace
       @current = 0
+      queue = []
+
+      while has_more_tokens
+        queue.push(next_token)
+      end
+
+      queue
     end
+
+    def has_more_tokens
+      @current <= (@characters.length - 1)
+    end
+
+
 
     def next_token
       if current_is_whitespace?
@@ -28,11 +56,9 @@ module Proposition
       elsif current_is_parenthesis?
         return Parenthesis.new(consume_current)
       else
-        raise "No rule defined for character #{current}"
+        raise "No rule defined for character #{current_character}"
       end
     end
-
-
 
     def is_operator?(string)
       OPERATORS.include?(string)
@@ -48,11 +74,11 @@ module Proposition
     end
 
     def current_is_parenthesis?
-      current == OPEN_PARENTHESIS || current == CLOSE_PARENTHESIS
+      current_character == OPEN_PARENTHESIS || current_character == CLOSE_PARENTHESIS
     end
 
     def current_is_whitespace?
-      WHITESPACE.include?(current)
+      WHITESPACE.include?(current_character)
     end
 
     def consume_whitespace
@@ -62,7 +88,7 @@ module Proposition
     end
 
     def consume_current
-      character = current
+      character = current_character
       @current += 1
 
       character
@@ -74,23 +100,22 @@ module Proposition
 
     def current_is_character?
       #matches any alphanumeric
-      result = current =~ /[A-Za-z_]/
+      result = current_character =~ /[A-Za-z_]/
       #if non-alphanumeric, checks for operator symbols such as
       #=> or <=>
-      result || current =~ /[<=>]/
+      result || current_character =~ /[<=>]/
     end
 
     def current_is_numeric?
-      current =~ /[0-9]/
+      current_character =~ /[0-9]/
     end
 
     def parenthesis?
-      current == "(" || current == ")"
+      current_character == "(" || current_character == ")"
     end
 
-    def current
+    def current_character
       @characters[@current]
     end
-
   end
 end
