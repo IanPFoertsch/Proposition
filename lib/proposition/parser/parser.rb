@@ -15,43 +15,62 @@ module Proposition
     end
 
     def parse
-      while lexer.look_ahead(0)
+      while look_ahead
         parse_sentence
       end
     end
 
     def parse_sentence
-      current = lexer.look_ahead(0)
-      next_token = lexer.look_ahead(1)
+      current = look_ahead
       if current.is_a?(Parenthesis)
         parse_sentence_in_parenthesis
-      elsif current.is_a?(Atom) && next_token.is_a?(Operator)
-        parse_compound_sentence
+        parse_optional_sentence_tail
       else
         parse_atomic_sentence
+        parse_optional_sentence_tail
       end
     end
 
     def parse_atomic_sentence
       atom = lexer.get_next_token
       unless atom.is_a?(Atom)
-        raise ParseError.new("Expecting an operator")
+        raise ParseError.new("Expecting an atom")
       end
     end
 
-    def parse_compound_sentence
-      parse_sentence
-      operator = parse_operator
-      parse_sentence
-      while lexer.look_ahead(0).is_a?(Operator)
-        unless operator.string == lexer.get_next_token.string
-          raise ParseError.new("operator types in n-ary sentences must be identical")
+    def parse_optional_sentence_tail
+      if look_ahead.is_a?(Operator)
+        operator = parse_operator
+        parse_sentence_without_optional_tail
+
+        if look_ahead.is_a?(Operator)
+          parse_n_ary_components(operator)
         end
-        parse_sentence
       end
-      #if the next token is nil or a closing parens, end here
-      #otherwise, expect another operator, and another atom.
-      #asset that the other operator is identical to the first,
+    end
+
+    def parse_sentence_without_optional_tail
+      if look_ahead.is_a?(Parenthesis)
+        parse_sentence_in_parenthesis
+      else
+        parse_atomic_sentence
+      end
+    end
+
+    def look_ahead
+      lexer.look_ahead(0)
+    end
+
+    def parse_n_ary_components(previous_operator)
+      while look_ahead.is_a?(Operator)
+        next_operator = parse_operator
+        if previous_operator
+          unless previous_operator.string == next_operator.string
+            raise ParseError.new("operators in n-ary sentences must be identical")
+          end
+        end
+        parse_sentence_without_optional_tail
+      end
     end
 
     def parse_operator
@@ -63,8 +82,6 @@ module Proposition
     end
 
     def parse_sentence_in_parenthesis
-      #our current token will be a parenthesis,
-      #so we need to consume the parenthesis
       open_parenthesis = lexer.get_next_token
       unless open_parenthesis.is_a?(Parenthesis) &&
         open_parenthesis.string == "("
