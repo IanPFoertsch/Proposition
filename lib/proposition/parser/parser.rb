@@ -21,20 +21,11 @@ module Proposition
     end
 
     def parse_sentence
-      next_token = lexer.look_ahead(0)
-
-      case next_token
-      when Atom
-        parse_atomic_or_binary_sentence
-      when Parenthesis
-        parse_sentence_in_parenthesis
-      end
-    end
-
-    def parse_atomic_or_binary_sentence
       current = lexer.look_ahead(0)
       next_token = lexer.look_ahead(1)
-      if current.is_a?(Atom) && next_token.is_a?(Operator)
+      if current.is_a?(Parenthesis)
+        parse_sentence_in_parenthesis
+      elsif current.is_a?(Atom) && next_token.is_a?(Operator)
         parse_compound_sentence
       else
         parse_atomic_sentence
@@ -49,9 +40,9 @@ module Proposition
     end
 
     def parse_compound_sentence
-      parse_atomic_sentence
+      parse_sentence
       operator = parse_operator
-      parse_atomic_sentence
+      parse_sentence
       while lexer.look_ahead(0).is_a?(Operator)
         unless operator.string == lexer.get_next_token.string
           raise ParseError.new("operator types in n-ary sentences must be identical")
