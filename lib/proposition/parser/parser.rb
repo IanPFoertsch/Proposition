@@ -20,13 +20,15 @@ module Proposition
       end
     end
 
+    ##TODO: Add support for NOT Keyword
     def parse_sentence
       current = look_ahead
       if current.is_a?(Parenthesis)
         parse_sentence_in_parenthesis
         parse_optional_sentence_tail
       else
-        parse_atomic_sentence
+        atom = parse_atomic_sentence
+
         parse_optional_sentence_tail
       end
     end
@@ -54,6 +56,7 @@ module Proposition
         parse_sentence_in_parenthesis
       else
         parse_atomic_sentence
+        parse_optional_sentence_tail
       end
     end
 

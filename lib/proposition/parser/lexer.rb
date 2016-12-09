@@ -7,7 +7,7 @@ module Proposition
     SLASH = "/"
     WHITESPACE = [" ", "\n" "\t"]
     OPERATORS = ["and", "or", "xor", "=>", "<=>"]
-
+    #TODO: Add support for not keyword
 
     def initialize(input)
       @token_queue = build_token_queue(input)

@@ -9,6 +9,12 @@ module Proposition
       end
     end
 
+    shared_examples_for "reject string" do
+      it "should reject the input string" do
+        expect { parser.parse } .to raise_error(Parser::ParseError)
+      end
+    end
+
     describe "parse" do
       context "with a string of atoms" do
         let(:input) { "one two three" }
