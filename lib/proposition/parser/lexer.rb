@@ -37,6 +37,7 @@ module Proposition
     end
 
     def next_token
+      #TODO: consolidate symbol => Token logic to TokenBuilder class
       if current_is_whitespace?
         consume_whitespace
         next_token

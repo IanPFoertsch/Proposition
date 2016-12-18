@@ -1,4 +1,5 @@
- require 'spec_helper'
+require 'spec_helper'
+
 module Proposition
   RSpec.describe Parser do
     let(:parser) { Parser.new(input) }
@@ -15,8 +16,26 @@ module Proposition
       end
     end
 
+    shared_examples_for "IRTree type" do
+      it "should return an IR Node" do
+        expect(parser.parse).to be_a(IRTree)
+      end
+    end
+
+
     describe "parse" do
+      context "with a single atom" do
+        let(:input) { "raining" }
+        include_examples "IRTree type"
+
+        it "should return shallow IR node" do
+          tree = parser.parse
+          expect(tree.leaf_node?).to be(true)
+        end
+      end
       context "with a string of atoms" do
+        #TODO: Update this to require some sort of delimiter
+        #for a string of atoms
         let(:input) { "one two three" }
         include_examples "accept string"
       end
@@ -30,6 +49,25 @@ module Proposition
         context "without parenthesis" do
           let(:input) { "one and two" }
           include_examples "accept string"
+          include_examples "IRTree type"
+
+          context "tree structure" do
+            let(:tree) { parser.parse }
+            it "should return an IRTree with an operator" do
+              expect(tree.operator.string).to eq("and")
+            end
+
+            it "should a binary IRTree" do
+              expect(tree.binary?).to be(true)
+            end
+
+            it "should have 'one' and 'two as children'" do
+              puts tree.left.atom.string
+              expect(tree.left.atom).to eq(Atom.new("one"))
+              expect(tree.operator).to eq(Operator.new("and"))
+              expect(tree.right.atom).to eq(Atom.new("two"))
+            end
+          end
         end
 
         context "with a nested sentence" do
@@ -40,6 +78,10 @@ module Proposition
         context "with a two nested atoms in a binary sentence" do
           let(:input) { "(one) and (two)" }
           include_examples "accept string"
+        end
+
+        context "with an atom, followed by an optional tail" do
+          let(:intput) { "one and two"}
         end
       end
 

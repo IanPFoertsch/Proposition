@@ -16,7 +16,7 @@ module Proposition
 
     def parse
       while look_ahead
-        parse_sentence
+        return parse_sentence
       end
     end
 
@@ -27,9 +27,13 @@ module Proposition
         parse_sentence_in_parenthesis
         parse_optional_sentence_tail
       else
-        atom = parse_atomic_sentence
-
-        parse_optional_sentence_tail
+        tree = parse_atomic_sentence
+        tail = parse_optional_sentence_tail
+        if tail
+          tail.left_concatenate(tree)
+        else
+          return tree
+        end
       end
     end
 
@@ -38,16 +42,18 @@ module Proposition
       unless atom.is_a?(Atom)
         raise ParseError.new("Expecting an atom")
       end
+      IRTree.new(atom)
     end
 
     def parse_optional_sentence_tail
       if look_ahead.is_a?(Operator)
         operator = parse_operator
-        parse_sentence_without_optional_tail
+        tail = parse_sentence_without_optional_tail
 
         if look_ahead.is_a?(Operator)
           parse_n_ary_components(operator)
         end
+        return IRTree.new(nil, operator, [tail])
       end
     end
 
@@ -55,8 +61,10 @@ module Proposition
       if look_ahead.is_a?(Parenthesis)
         parse_sentence_in_parenthesis
       else
-        parse_atomic_sentence
-        parse_optional_sentence_tail
+        return parse_atomic_sentence
+        #TODO: Below statement is probably incorrect, add test
+        #case to determine intermediate representation.
+        # parse_optional_sentence_tail
       end
     end
 
