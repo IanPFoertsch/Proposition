@@ -11,15 +11,23 @@ module Proposition
     end
 
     def left_concatenate(tree)
-      return IRTree.new(nil, operator, tree, left, [right] + others)
+      other_children = others.empty? ? [right] : [right] + others
+      if others.empty? && right.nil?
+        other_children = []
+      elsif others.empty?
+        other_children = [right]
+      else
+        other_children = []
+      end
+      return IRTree.new(nil, operator, tree, left, other_children)
     end
 
     def leaf_node?
-      @atom && @operator.nil? && @left.nil? && @right.nil? && @others.nil?
+      @atom && @operator.nil? && @left.nil? && @right.nil? && @others.empty?
     end
 
     def binary?
-      @atom.nil? && @operator && @left && @right && @others.nil?
+      @atom.nil? && @operator && @left && @right && @others.empty?
     end
 
     def n_ary?

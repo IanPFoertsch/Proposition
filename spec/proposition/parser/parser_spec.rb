@@ -57,7 +57,7 @@ module Proposition
               expect(tree.operator.string).to eq("and")
             end
 
-            it "should a binary IRTree" do
+            it "should return a binary IRTree" do
               expect(tree.binary?).to be(true)
             end
 

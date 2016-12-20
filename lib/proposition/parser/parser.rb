@@ -30,7 +30,7 @@ module Proposition
         tree = parse_atomic_sentence
         tail = parse_optional_sentence_tail
         if tail
-          tail.left_concatenate(tree)
+          return tail.left_concatenate(tree)
         else
           return tree
         end
@@ -53,7 +53,7 @@ module Proposition
         if look_ahead.is_a?(Operator)
           parse_n_ary_components(operator)
         end
-        return IRTree.new(nil, operator, [tail])
+        return IRTree.new(nil, operator, tail)
       end
     end
 
