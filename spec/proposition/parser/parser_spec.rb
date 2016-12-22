@@ -1,8 +1,8 @@
 require 'spec_helper'
-
 module Proposition
   RSpec.describe Parser do
     let(:parser) { Parser.new(input) }
+    let(:tree) { parser.parse }
 
     shared_examples_for "accept string" do
       it "should accept the input string" do
@@ -52,7 +52,6 @@ module Proposition
           include_examples "IRTree type"
 
           context "tree structure" do
-            let(:tree) { parser.parse }
             it "should return an IRTree with an operator" do
               expect(tree.operator.string).to eq("and")
             end
@@ -62,10 +61,9 @@ module Proposition
             end
 
             it "should have 'one' and 'two as children'" do
-              puts tree.left.atom.string
-              expect(tree.left.atom).to eq(Atom.new("one"))
-              expect(tree.operator).to eq(Operator.new("and"))
-              expect(tree.right.atom).to eq(Atom.new("two"))
+              children = tree.children
+              expect(children[0].atom.string).to eq("one")
+              expect(children[1 ].atom.string).to eq("two")
             end
           end
         end
@@ -81,7 +79,14 @@ module Proposition
         end
 
         context "with an atom, followed by an optional tail" do
-          let(:intput) { "one and two"}
+          let(:input) { "one and two and three"}
+          include_examples "accept string"
+
+
+          it "should contain additional child nodes" do
+
+            expect(tree.children.empty?).to be(false)
+          end
         end
       end
 

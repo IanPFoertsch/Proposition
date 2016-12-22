@@ -30,7 +30,7 @@ module Proposition
         tree = parse_atomic_sentence
         tail = parse_optional_sentence_tail
         if tail
-          return tail.left_concatenate(tree)
+          return tree.append(tail)
         else
           return tree
         end
@@ -51,9 +51,9 @@ module Proposition
         tail = parse_sentence_without_optional_tail
 
         if look_ahead.is_a?(Operator)
-          parse_n_ary_components(operator)
+          components = parse_n_ary_components(operator)
         end
-        return IRTree.new(nil, operator, tail)
+        return IRTree.new(nil, operator, [tail])
       end
     end
 
@@ -98,12 +98,14 @@ module Proposition
         open_parenthesis.string == "("
         raise ParseError.new("Expecting token '('")
       end
-      parse_sentence
+      sentence = parse_sentence
       close_parenthesis = lexer.get_next_token
       unless close_parenthesis.is_a?(Parenthesis) &&
         close_parenthesis.string == ")"
         raise ParseError.new("Expecting token ')'")
       end
+
+      return sentence
     end
   end
 end

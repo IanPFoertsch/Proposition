@@ -1,47 +1,51 @@
 module Proposition
   class IRTree
-    attr_reader :atom, :operator, :left, :right, :others
+    attr_reader :atom, :operator, :left, :right, :children
 
-    def initialize(atom, operator = nil, left = nil, right = nil, others = [])
+    def initialize(atom, operator = nil, children = [])
       @atom = atom
       @operator = operator
-      @left = left
-      @right = right
-      @others = others
+      @children = children
     end
 
-    def left_concatenate(tree)
-      other_children = others.empty? ? [right] : [right] + others
-      if others.empty? && right.nil?
-        other_children = []
-      elsif others.empty?
-        other_children = [right]
+
+    def append(appendee)
+      if leaf_node?
+        if appendee.leaf_node?
+          raise ArgumentError.new("Cannot append two leaf nodes without an operator")
+        end
+        IRTree.new(nil, appendee.operator, [deep_copy] + appendee.children)
       else
-        other_children = []
+        IRTree.new(nil, operator, children + [appendee])
       end
-      return IRTree.new(nil, operator, tree, left, other_children)
+    end
+
+    def left_concatenate(appendee)
+
     end
 
     def leaf_node?
-      @atom && @operator.nil? && @left.nil? && @right.nil? && @others.empty?
+       atom && children.empty?
     end
 
     def binary?
-      @atom.nil? && @operator && @left && @right && @others.empty?
+      children.length == 2
     end
 
     def n_ary?
-      !@others.nil
+      children.length >= 3
     end
 
     def operator
       deep_copy(@operator)
     end
 
-    private
+    def children
+      @children.map(&:deep_copy)
+    end
 
-    def deep_copy(subject)
-      Marshal.load(Marshal.dump(subject))
+    def deep_copy(subject = nil)
+      Marshal.load(Marshal.dump(subject || self))
     end
   end
 end
