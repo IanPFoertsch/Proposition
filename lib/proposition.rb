@@ -2,6 +2,7 @@ require "proposition/version"
 require 'active_support'
 
 module Proposition
+  autoload  :AtomicSentence, 'proposition/sentence/atomic_sentence'
   autoload  :Sentence, 'proposition/sentence/sentence'
   autoload  :Lexer, 'proposition/parser/lexer'
   autoload  :Parser, 'proposition/parser/parser'
@@ -10,7 +11,7 @@ module Proposition
   autoload  :Operator, 'proposition/parser/token/operator'
   autoload  :Parenthesis, 'proposition/parser/token/parenthesis'
   autoload  :Processor, 'proposition/operators/processor'
-  autoload  :AtomicSentence, 'proposition/sentence/atomic_sentence'
+  autoload  :IRTree, 'proposition/parser/ir_tree'
   autoload  :Logic, 'proposition/sentence/logic'
   autoload  :Evaluator, 'proposition/sentence/evaluator'
   autoload  :NegatedSentence, 'proposition/sentence/negated_sentence'

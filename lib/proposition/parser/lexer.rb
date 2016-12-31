@@ -7,7 +7,7 @@ module Proposition
     SLASH = "/"
     WHITESPACE = [" ", "\n" "\t"]
     OPERATORS = ["and", "or", "xor", "=>", "<=>"]
-
+    #TODO: Add support for not keyword
 
     def initialize(input)
       @token_queue = build_token_queue(input)
@@ -37,6 +37,7 @@ module Proposition
     end
 
     def next_token
+      #TODO: consolidate symbol => Token logic to TokenBuilder class
       if current_is_whitespace?
         consume_whitespace
         next_token

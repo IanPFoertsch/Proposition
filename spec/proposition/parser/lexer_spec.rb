@@ -67,9 +67,5 @@ module Proposition
         end
       end
     end
-
-    describe "look_ahead" do
-      
-    end
   end
 end

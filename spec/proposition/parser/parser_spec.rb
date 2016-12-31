@@ -1,7 +1,8 @@
- require 'spec_helper'
+require 'spec_helper'
 module Proposition
   RSpec.describe Parser do
     let(:parser) { Parser.new(input) }
+    let(:tree) { parser.parse }
 
     shared_examples_for "accept string" do
       it "should accept the input string" do
@@ -9,8 +10,32 @@ module Proposition
       end
     end
 
+    shared_examples_for "reject string" do
+      it "should reject the input string" do
+        expect { parser.parse } .to raise_error(Parser::ParseError)
+      end
+    end
+
+    shared_examples_for "IRTree type" do
+      it "should return an IR Node" do
+        expect(parser.parse).to be_a(IRTree)
+      end
+    end
+
+
     describe "parse" do
+      context "with a single atom" do
+        let(:input) { "raining" }
+        include_examples "IRTree type"
+
+        it "should return shallow IR node" do
+          tree = parser.parse
+          expect(tree.leaf_node?).to be(true)
+        end
+      end
       context "with a string of atoms" do
+        #TODO: Update this to require some sort of delimiter
+        #for a string of atoms
         let(:input) { "one two three" }
         include_examples "accept string"
       end
@@ -24,6 +49,23 @@ module Proposition
         context "without parenthesis" do
           let(:input) { "one and two" }
           include_examples "accept string"
+          include_examples "IRTree type"
+
+          context "tree structure" do
+            it "should return an IRTree with an operator" do
+              expect(tree.operator.string).to eq("and")
+            end
+
+            it "should return a binary IRTree" do
+              expect(tree.binary?).to be(true)
+            end
+
+            it "should have 'one' and 'two as children'" do
+              children = tree.children
+              expect(children[0].atom.string).to eq("one")
+              expect(children[1 ].atom.string).to eq("two")
+            end
+          end
         end
 
         context "with a nested sentence" do
@@ -34,6 +76,17 @@ module Proposition
         context "with a two nested atoms in a binary sentence" do
           let(:input) { "(one) and (two)" }
           include_examples "accept string"
+        end
+
+        context "with an atom, followed by an optional tail" do
+          let(:input) { "one and two and three"}
+          include_examples "accept string"
+
+
+          it "should contain additional child nodes" do
+
+            expect(tree.children.empty?).to be(false)
+          end
         end
       end
 

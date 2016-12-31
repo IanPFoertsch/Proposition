@@ -16,18 +16,24 @@ module Proposition
 
     def parse
       while look_ahead
-        parse_sentence
+        return parse_sentence
       end
     end
 
+    ##TODO: Add support for NOT Keyword
     def parse_sentence
       current = look_ahead
       if current.is_a?(Parenthesis)
         parse_sentence_in_parenthesis
         parse_optional_sentence_tail
       else
-        parse_atomic_sentence
-        parse_optional_sentence_tail
+        tree = parse_atomic_sentence
+        tail = parse_optional_sentence_tail
+        if tail
+          return tree.append(tail)
+        else
+          return tree
+        end
       end
     end
 
@@ -36,16 +42,18 @@ module Proposition
       unless atom.is_a?(Atom)
         raise ParseError.new("Expecting an atom")
       end
+      IRTree.new(atom)
     end
 
     def parse_optional_sentence_tail
       if look_ahead.is_a?(Operator)
         operator = parse_operator
-        parse_sentence_without_optional_tail
+        tail = parse_sentence_without_optional_tail
 
         if look_ahead.is_a?(Operator)
-          parse_n_ary_components(operator)
+          components = parse_n_ary_components(operator)
         end
+        return IRTree.new(nil, operator, [tail])
       end
     end
 
@@ -53,7 +61,10 @@ module Proposition
       if look_ahead.is_a?(Parenthesis)
         parse_sentence_in_parenthesis
       else
-        parse_atomic_sentence
+        return parse_atomic_sentence
+        #TODO: Below statement is probably incorrect, add test
+        #case to determine intermediate representation.
+        # parse_optional_sentence_tail
       end
     end
 
@@ -87,12 +98,14 @@ module Proposition
         open_parenthesis.string == "("
         raise ParseError.new("Expecting token '('")
       end
-      parse_sentence
+      sentence = parse_sentence
       close_parenthesis = lexer.get_next_token
       unless close_parenthesis.is_a?(Parenthesis) &&
         close_parenthesis.string == ")"
         raise ParseError.new("Expecting token ')'")
       end
+
+      return sentence
     end
   end
 end
