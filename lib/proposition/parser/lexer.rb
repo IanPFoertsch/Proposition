@@ -6,8 +6,17 @@ module Proposition
 
     SLASH = "/"
     WHITESPACE = [" ", "\n" "\t"]
-    OPERATORS = ["and", "or", "xor", "=>", "<=>"]
-    #TODO: Add support for not keyword
+
+    AND = "and"
+    OR = "or"
+    XOR = "xor"
+    IMPLICATION = "=>"
+    BICONDITIONAL = "<=>"
+    NOT = "not"
+
+    UNARY_OPERATORS = [NOT]
+    N_ARY_OPERATORS = [AND, OR, XOR, IMPLICATION, BICONDITIONAL]
+
 
     def initialize(input)
       @token_queue = build_token_queue(input)
@@ -43,8 +52,10 @@ module Proposition
         next_token
       elsif current_is_character?
         string = consume_characters
-        if current_is_operator?(string)
-          Operator.new(string)
+        if current_is_n_ary_operator?(string)
+          NAryOperator.new(string)
+        elsif current_is_unary_operator?(string)
+          UnaryOperator.new(string)
         else
           Atom.new(string)
         end
@@ -63,8 +74,12 @@ module Proposition
       WHITESPACE.include?(current_character)
     end
 
-    def current_is_operator?(string)
-      OPERATORS.include?(string)
+    def current_is_unary_operator?(string)
+      UNARY_OPERATORS.include?(string)
+    end
+
+    def current_is_n_ary_operator?(string)
+      N_ARY_OPERATORS.include?(string)
     end
 
     def current_is_character?

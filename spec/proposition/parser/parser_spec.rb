@@ -22,6 +22,12 @@ module Proposition
       end
     end
 
+    shared_examples_for "IRTree operator token" do |token_string|
+      it "should have an '#{token_string}' operator" do
+        expect(tree.operator.string).to eq(token_string)
+      end
+    end
+
 
     describe "parse" do
       context "with a single atom" do
@@ -38,6 +44,27 @@ module Proposition
         #for a string of atoms
         let(:input) { "one two three" }
         include_examples "accept string"
+      end
+
+      context "with a unary sentence structure" do
+        let(:input) { "not raining" }
+        include_examples "accept string"
+        include_examples "IRTree type"
+        include_examples "IRTree operator token", "not"
+
+        context "with a tail" do
+          let(:input) { "not raining or snowing" }
+          include_examples "accept string"
+          include_examples "IRTree type"
+          include_examples "IRTree operator token", "or"
+        end
+
+        context "within a n-ary sentence structure" do
+          let(:input) { "snowing or not raining or misting" }
+          include_examples "accept string"
+          include_examples "IRTree type"
+          include_examples "IRTree operator token", "or"
+        end
       end
 
       context "binary sentence structure" do

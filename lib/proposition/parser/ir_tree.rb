@@ -5,7 +5,11 @@ module Proposition
     def initialize(atom, operator = nil, children = [])
       @atom = atom
       @operator = operator
-      @children = children
+      if children.is_a?(Array)
+        @children = children
+      else
+        @children = [children]
+      end
     end
 
 
@@ -18,6 +22,16 @@ module Proposition
       else
         IRTree.new(nil, operator, children + [appendee])
       end
+    end
+
+    #Distinct from 'append' in the sense that it appends "from the left"
+    #In particular for inserting a unary sentence into the optional 'tail'
+    #of the sentence
+    def left_append(appendee)
+      if appendee.leaf_node?
+        raise ArgumentError.new("Left_append called with a leaf node operand, only supports nodes with children")
+      end
+      IRTree.new(nil, operator, appendee.children + children)
     end
 
     def left_concatenate(appendee)

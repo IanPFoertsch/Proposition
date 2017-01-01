@@ -49,12 +49,21 @@ module Proposition
       end
 
       context "operators" do
-        let(:operators) { ["and", "or", "xor", "=>", "<=>"] }
-        it "should recognize the following as operators" do
-          operators.each do |operator|
-            lexer = Lexer.new(operator)
-            expect(lexer.get_next_token).to be_a(Operator)
+        shared_examples_for "recognizes operators" do |klazz|
+          it "should recognize the following as operators" do
+            operators.each do |operator|
+              lexer = Lexer.new(operator)
+              expect(lexer.get_next_token).to be_a(klazz)
+            end
           end
+        end
+        context "n_ary" do
+          let(:operators) { ["and", "or", "xor", "=>", "<=>"] }
+          include_examples "recognizes operators", NAryOperator
+        end
+        context "unary" do
+          let(:operators) { ["not"] }
+          include_examples "recognizes operators", UnaryOperator
         end
       end
 

@@ -2,24 +2,21 @@ require 'spec_helper'
 
 module Proposition
   RSpec.describe IRTree do
-
+    let(:leaf) { IRTree.new(Atom.new("one")) }
+    let(:other_leaf) { IRTree.new(Atom.new("other")) }
+    let(:two) { IRTree.new(Atom.new("two")) }
+    let(:three) { IRTree.new(Atom.new("three")) }
+    let(:tail) { IRTree.new(nil, Operator.new("and"), [two, three] )}
 
     describe "push" do
-
       context "with a leaf node" do
-        let(:leaf) { IRTree.new(Atom.new("one")) }
-
         context "and another leaf node" do
-          let(:other_leaf) { IRTree.new(Atom.new("other")) }
           it "should raise an error" do
             expect { leaf.append(other_leaf) }.to raise_error(ArgumentError)
           end
         end
 
         context "and a binary tree" do
-          let(:two) { IRTree.new(Atom.new("two")) }
-          let(:three) { IRTree.new(Atom.new("three")) }
-          let(:tail) { IRTree.new(nil, Operator.new("and"), [two, three] )}
           let(:merged) { leaf.append(tail) }
 
           it "should merge the two trees" do
@@ -36,10 +33,33 @@ module Proposition
             expect(children[0].atom).to eq(leaf.atom)
             expect(children[1].atom).to eq(two.atom)
           end
+        end
+      end
+    end
 
-          it "should replicate the existing children" do
-            
-          end
+    describe "left_append" do
+      context "with a leaf node operand" do
+        it "should raise an Error" do
+          expect{ tail.left_append(leaf) }.to raise_error(ArgumentError)
+        end
+      end
+
+      context "with a non-leaf node operand" do
+        let(:four) { IRTree.new(Atom.new("four")) }
+        let(:operand) { IRTree.new(nil, Operator.new("not"), four) }
+        let(:appended) { tail.left_append(operand) }
+
+        it "should return an IRTree" do
+          expect(appended).to be_a(IRTree)
+        end
+
+        it "should contain the original operand's children in the leftmost positions" do
+          expect(appended.children[0].atom).to eq(four.atom)
+        end
+
+        it "should contain the subject's children in the rightmost positions" do
+          expect(appended.children[1].atom).to eq(two.atom)
+          expect(appended.children[2].atom).to eq(three.atom)
         end
       end
     end
