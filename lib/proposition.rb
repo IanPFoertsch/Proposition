@@ -9,6 +9,8 @@ module Proposition
   autoload  :Token, 'proposition/parser/token/token'
   autoload  :Atom, 'proposition/parser/token/atom'
   autoload  :Operator, 'proposition/parser/token/operator'
+  autoload  :NAryOperator, 'proposition/parser/token/n_ary_operator'
+  autoload  :UnaryOperator, 'proposition/parser/token/unary_operator'
   autoload  :Parenthesis, 'proposition/parser/token/parenthesis'
   autoload  :Processor, 'proposition/operators/processor'
   autoload  :IRTree, 'proposition/parser/ir_tree'
