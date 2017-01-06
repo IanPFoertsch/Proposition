@@ -2,23 +2,23 @@ require 'spec_helper'
 module Proposition
   RSpec.describe Parser do
     let(:parser) { Parser.new(input) }
-    let(:tree) { parser.parse }
+    let(:tree) { parser.parse_sentence }
 
     shared_examples_for "accept string" do
       it "should accept the input string" do
-        expect { parser.parse } .not_to raise_error
+        expect { parser.parse_sentence } .not_to raise_error
       end
     end
 
     shared_examples_for "reject string" do
       it "should reject the input string" do
-        expect { parser.parse } .to raise_error(Parser::ParseError)
+        expect { parser.parse_sentence } .to raise_error(Parser::ParseError)
       end
     end
 
     shared_examples_for "IRTree type" do
       it "should return an IR Node" do
-        expect(parser.parse).to be_a(IRTree)
+        expect(parser.parse_sentence).to be_a(IRTree)
       end
     end
 
@@ -28,22 +28,15 @@ module Proposition
       end
     end
 
-
-    describe "parse" do
+    describe "parse_sentence" do
       context "with a single atom" do
         let(:input) { "raining" }
         include_examples "IRTree type"
 
         it "should return shallow IR node" do
-          tree = parser.parse
+          tree = parser.parse_sentence
           expect(tree.leaf_node?).to be(true)
         end
-      end
-      context "with a string of atoms" do
-        #TODO: Update this to require some sort of delimiter
-        #for a string of atoms
-        let(:input) { "one two three" }
-        include_examples "accept string"
       end
 
       context "with a unary sentence structure" do
@@ -64,6 +57,20 @@ module Proposition
           include_examples "accept string"
           include_examples "IRTree type"
           include_examples "IRTree operator token", "or"
+        end
+
+        context "with a nested string of unary operators" do
+          let(:input) { "not not not raining" }
+          include_examples "accept string"
+          include_examples "IRTree operator token", "not"
+          
+          it "should wrap each sub-sentence in a unary operator" do
+            sub_sentence = tree
+            2.times do
+              sub_sentence = sub_sentence.children.first
+              expect(sub_sentence.operator).to be_a(UnaryOperator)
+            end
+          end
         end
       end
 
@@ -133,6 +140,11 @@ module Proposition
           include_examples "accept string"
         end
 
+        context "with a series of not operators" do
+          let(:input) { "not one not two not three" }
+          include_examples "reject string"
+        end
+
         context "with three nested sentences " do
           context "with identical operators" do
             let(:input) { "(one) and (two) and (three)" }
@@ -142,7 +154,7 @@ module Proposition
           context "with differing operators" do
             let(:input) { "(one) and (two) or (three)" }
             it "should not accept the input string" do
-              expect { parser.parse } .to raise_error(Parser::ParseError)
+              expect { parser.parse_sentence } .to raise_error(Parser::ParseError)
             end
           end
 

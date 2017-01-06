@@ -62,8 +62,12 @@ module Proposition
     def parse_unary_sentence
       raise ParseError.new("Cannot begin sentence with non-unary operator") unless look_ahead.is_a?(UnaryOperator)
       operator = parse_operator
-
-      IRTree.new(nil, operator, parse_sentence_without_optional_tail)
+      if look_ahead.is_a?(UnaryOperator)
+        sentence = parse_unary_sentence
+      else
+        sentence = parse_sentence_without_optional_tail
+      end
+      IRTree.new(nil, operator, sentence)
     end
 
     def parse_sentence_without_optional_tail
@@ -79,14 +83,16 @@ module Proposition
 
     def parse_optional_sentence_tail
       previous_operator = nil
-
+      #TODO: Refactor this block into smaller chunks
       while look_ahead.is_a?(Operator)
         sentences = []
         if look_ahead.is_a?(UnaryOperator)
           #This consumes the operator token
           sentences.push(parse_unary_sentence)
+          if look_ahead.is_a?(UnaryOperator)
+            raise ParseError.new("Sentences cannot be concatenated using a unary operator")
+          end
         elsif look_ahead.is_a?(NAryOperator)
-
           operator = parse_operator
           if previous_operator
             unless previous_operator.string == operator.string
@@ -97,8 +103,11 @@ module Proposition
           previous_operator = operator
         end
       end
-      return nil unless sentences
-      return IRTree.new(nil, operator, sentences)
+      return nil unless sentences #If we havn't parsed anything, return nil
+      return sentences.first unless operator  #return the solo unary sentence if we havn't parsed
+                                              #a connecting operator
+      return IRTree.new(nil, operator, sentences) #otherwise return the parsed sentences connected
+                                                  #by the operator
     end
 
 
@@ -109,8 +118,6 @@ module Proposition
 
     def parse_n_ary_components(previous_operator)
       while look_ahead.is_a?(Operator)
-
-
         parse_sentence_without_optional_tail
       end
     end
