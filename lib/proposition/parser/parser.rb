@@ -44,6 +44,7 @@ module Proposition
       unless atom.is_a?(Atom)
         raise ParseError.new("Expecting an atom")
       end
+
       IRTree.new(atom)
     end
 
@@ -63,9 +64,14 @@ module Proposition
       raise ParseError.new("Cannot begin sentence with non-unary operator") unless look_ahead.is_a?(UnaryOperator)
       operator = parse_operator
       if look_ahead.is_a?(UnaryOperator)
+        #we have to recurse here to handle strings of unary operators
         sentence = parse_unary_sentence
       else
         sentence = parse_sentence_without_optional_tail
+      end
+      #cannot construct sentence of a series of unary sentences
+      if look_ahead.is_a?(UnaryOperator)
+        raise ParseError.new("Sentences cannot be concatenated using a unary operator")
       end
       IRTree.new(nil, operator, sentence)
     end
@@ -80,34 +86,31 @@ module Proposition
       end
     end
 
-
     def parse_optional_sentence_tail
-      previous_operator = nil
       #TODO: Refactor this block into smaller chunks
+      return nil unless look_ahead.is_a?(Operator)
+
+      previous_operator = nil
       while look_ahead.is_a?(Operator)
         sentences = []
         if look_ahead.is_a?(UnaryOperator)
-          #This consumes the operator token
           sentences.push(parse_unary_sentence)
-          if look_ahead.is_a?(UnaryOperator)
-            raise ParseError.new("Sentences cannot be concatenated using a unary operator")
-          end
         elsif look_ahead.is_a?(NAryOperator)
           operator = parse_operator
+
           if previous_operator
             unless previous_operator.string == operator.string
               raise ParseError.new("operators in n-ary sentences must be identical")
             end
           end
+
           sentences.push(parse_sentence_without_optional_tail)
           previous_operator = operator
         end
       end
-      return nil unless sentences #If we havn't parsed anything, return nil
-      return sentences.first unless operator  #return the solo unary sentence if we havn't parsed
-                                              #a connecting operator
+      #TODO: refactor this awkward case handling
+      return sentences.first unless operator  #return the solo unary sentence
       return IRTree.new(nil, operator, sentences) #otherwise return the parsed sentences connected
-                                                  #by the operator
     end
 
 
@@ -117,7 +120,7 @@ module Proposition
     end
 
     def parse_n_ary_components(previous_operator)
-      while look_ahead.is_a?(Operator)
+      while look_ahead.is_a?(BinaryOperator)
         parse_sentence_without_optional_tail
       end
     end

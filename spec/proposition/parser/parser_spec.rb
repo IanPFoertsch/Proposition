@@ -63,13 +63,25 @@ module Proposition
           let(:input) { "not not not raining" }
           include_examples "accept string"
           include_examples "IRTree operator token", "not"
-          
+
           it "should wrap each sub-sentence in a unary operator" do
             sub_sentence = tree
             2.times do
               sub_sentence = sub_sentence.children.first
               expect(sub_sentence.operator).to be_a(UnaryOperator)
             end
+          end
+
+          context "within an n-ary sentence structure" do
+            let(:input) { "snowing or not not raining or misting" }
+            include_examples "accept string"
+            include_examples "IRTree type"
+            include_examples "IRTree operator token", "or"
+          end
+
+          context "with an invalid sequence of unary operators" do
+            let(:input) { "snowing or not raining not misting" }
+            include_examples "reject string"
           end
         end
       end
@@ -118,7 +130,6 @@ module Proposition
 
 
           it "should contain additional child nodes" do
-
             expect(tree.children.empty?).to be(false)
           end
         end
@@ -140,7 +151,7 @@ module Proposition
           include_examples "accept string"
         end
 
-        context "with a series of not operators" do
+        context "with a series of unary operators" do
           let(:input) { "not one not two not three" }
           include_examples "reject string"
         end
