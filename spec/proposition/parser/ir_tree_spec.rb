@@ -53,8 +53,10 @@ module Proposition
           expect(appended).to be_a(IRTree)
         end
 
-        it "should contain the original operand's children in the leftmost positions" do
-          expect(appended.children[0].atom).to eq(four.atom)
+        it "should contain the original operand as a child in the leftmost positions" do
+          negated = appended.children[0]
+          expect(negated.operator.string).to eq("not")
+          expect(negated.children.first.atom.string).to eq(four.atom.string)
         end
 
         it "should contain the subject's children in the rightmost positions" do

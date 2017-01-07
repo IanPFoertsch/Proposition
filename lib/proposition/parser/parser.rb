@@ -90,9 +90,11 @@ module Proposition
       #TODO: Refactor this block into smaller chunks
       return nil unless look_ahead.is_a?(Operator)
 
+      sentences = []
       previous_operator = nil
+
       while look_ahead.is_a?(Operator)
-        sentences = []
+
         if look_ahead.is_a?(UnaryOperator)
           sentences.push(parse_unary_sentence)
         elsif look_ahead.is_a?(NAryOperator)
@@ -117,12 +119,6 @@ module Proposition
 
     def look_ahead
       lexer.look_ahead(0)
-    end
-
-    def parse_n_ary_components(previous_operator)
-      while look_ahead.is_a?(BinaryOperator)
-        parse_sentence_without_optional_tail
-      end
     end
 
     def parse_operator
