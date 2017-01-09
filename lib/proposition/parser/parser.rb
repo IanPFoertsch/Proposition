@@ -1,3 +1,4 @@
+require "pry"
 module Proposition
   class Parser
     class ParseError < StandardError
@@ -16,7 +17,8 @@ module Proposition
 
     def parse
       while look_ahead
-        return parse_sentence
+        ir_tree = parse_sentence
+        
       end
     end
 
@@ -50,6 +52,7 @@ module Proposition
 
     def parse_unary_sentence_with_tail
       unary_sentence = parse_unary_sentence
+
       tail = parse_optional_sentence_tail
       if tail
         #Need to "left append" the unary sentence into the tail

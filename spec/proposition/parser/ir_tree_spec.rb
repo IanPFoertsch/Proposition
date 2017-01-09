@@ -1,26 +1,23 @@
 require 'spec_helper'
+require_relative 'ir_tree_fixtures'
 
 module Proposition
   RSpec.describe IRTree do
-    let(:leaf) { IRTree.new(Atom.new("one")) }
-    let(:other_leaf) { IRTree.new(Atom.new("other")) }
-    let(:two) { IRTree.new(Atom.new("two")) }
-    let(:three) { IRTree.new(Atom.new("three")) }
-    let(:tail) { IRTree.new(nil, Operator.new("and"), [two, three] )}
+    include_context "IRTree Fixtures"
 
     describe "push" do
       context "with a leaf node" do
         context "and another leaf node" do
           it "should raise an error" do
-            expect { leaf.append(other_leaf) }.to raise_error(ArgumentError)
+            expect { ir_tree_a.append(ir_tree_b) }.to raise_error(ArgumentError)
           end
         end
 
         context "and a binary tree" do
-          let(:merged) { leaf.append(tail) }
+          let(:merged) { ir_tree_a.append(tail) }
 
           it "should merge the two trees" do
-            expect { leaf.append(tail) }.not_to raise_error
+            expect { ir_tree_a.append(tail) }.not_to raise_error
           end
 
           it "should include the operator" do
@@ -30,8 +27,8 @@ module Proposition
           it "should preserve the order of the componenets" do
             children = merged.children
             expect(children.length).to eq(3)
-            expect(children[0].atom).to eq(leaf.atom)
-            expect(children[1].atom).to eq(two.atom)
+            expect(children[0].atom).to eq(ir_tree_a.atom)
+            expect(children[1].atom).to eq(ir_tree_c.atom)
           end
         end
       end
@@ -40,7 +37,7 @@ module Proposition
     describe "left_append" do
       context "with a leaf node operand" do
         it "should raise an Error" do
-          expect{ tail.left_append(leaf) }.to raise_error(ArgumentError)
+          expect{ tail.left_append(ir_tree_a) }.to raise_error(ArgumentError)
         end
       end
 
@@ -60,8 +57,8 @@ module Proposition
         end
 
         it "should contain the subject's children in the rightmost positions" do
-          expect(appended.children[1].atom).to eq(two.atom)
-          expect(appended.children[2].atom).to eq(three.atom)
+          expect(appended.children[1].atom).to eq(ir_tree_c.atom)
+          expect(appended.children[2].atom).to eq(ir_tree_d.atom)
         end
       end
     end

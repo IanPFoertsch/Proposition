@@ -38,6 +38,10 @@ module Proposition
        atom && children.empty?
     end
 
+    def unary?
+      children.length == 1
+    end
+
     def binary?
       children.length == 2
     end
