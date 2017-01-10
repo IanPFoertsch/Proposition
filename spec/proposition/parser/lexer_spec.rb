@@ -3,7 +3,6 @@ require 'spec_helper'
 module Proposition
   RSpec.describe Lexer do
 
-
     describe "get_next_token" do
       let(:lexer) { Lexer.new(input) }
 
@@ -35,8 +34,6 @@ module Proposition
           it "should treat underscores as characters" do
             expect(lexer.get_next_token.string).to eq(input)
           end
-
-
         end
 
         context "with underscores and digits" do

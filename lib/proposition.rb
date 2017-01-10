@@ -14,6 +14,7 @@ module Proposition
   autoload  :Parenthesis, 'proposition/parser/token/parenthesis'
   autoload  :Processor, 'proposition/operators/processor'
   autoload  :IRTree, 'proposition/parser/ir_tree'
+  autoload  :IRTreeTransformer, 'proposition/parser/ir_tree_transformer'
   autoload  :Logic, 'proposition/sentence/logic'
   autoload  :Evaluator, 'proposition/sentence/evaluator'
   autoload  :NegatedSentence, 'proposition/sentence/negated_sentence'

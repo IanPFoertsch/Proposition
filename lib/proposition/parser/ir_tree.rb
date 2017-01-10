@@ -31,15 +31,15 @@ module Proposition
       if appendee.leaf_node?
         raise ArgumentError.new("Left_append called with a leaf node operand, only supports nodes with children")
       end
-      IRTree.new(nil, operator, appendee.children + children)
-    end
-
-    def left_concatenate(appendee)
-
+      IRTree.new(nil, operator, [appendee] + children)
     end
 
     def leaf_node?
        atom && children.empty?
+    end
+
+    def unary?
+      children.length == 1
     end
 
     def binary?

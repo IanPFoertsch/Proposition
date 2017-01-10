@@ -136,6 +136,16 @@ module Proposition
       end
 
       context "n-ary sentence structure" do
+        context "starting with a unary sentence" do
+          let(:input) { "not one and two and three" }
+          include_examples "accept string"
+          include_examples "IRTree operator token", "and"
+          it "should have a unary not sentence as the first child" do
+            puts tree.inspect
+            expect(tree.children.first.operator).to be_a(UnaryOperator)
+          end
+        end
+
         context "with simple non-nested atoms " do
           let(:input) { "one and two and three" }
           include_examples "accept string"

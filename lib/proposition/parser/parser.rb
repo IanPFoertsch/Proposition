@@ -1,3 +1,4 @@
+require "pry"
 module Proposition
   class Parser
     class ParseError < StandardError
@@ -16,7 +17,8 @@ module Proposition
 
     def parse
       while look_ahead
-        return parse_sentence
+        ir_tree = parse_sentence
+        
       end
     end
 
@@ -50,6 +52,7 @@ module Proposition
 
     def parse_unary_sentence_with_tail
       unary_sentence = parse_unary_sentence
+
       tail = parse_optional_sentence_tail
       if tail
         #Need to "left append" the unary sentence into the tail
@@ -90,9 +93,11 @@ module Proposition
       #TODO: Refactor this block into smaller chunks
       return nil unless look_ahead.is_a?(Operator)
 
+      sentences = []
       previous_operator = nil
+
       while look_ahead.is_a?(Operator)
-        sentences = []
+
         if look_ahead.is_a?(UnaryOperator)
           sentences.push(parse_unary_sentence)
         elsif look_ahead.is_a?(NAryOperator)
@@ -117,12 +122,6 @@ module Proposition
 
     def look_ahead
       lexer.look_ahead(0)
-    end
-
-    def parse_n_ary_components(previous_operator)
-      while look_ahead.is_a?(BinaryOperator)
-        parse_sentence_without_optional_tail
-      end
     end
 
     def parse_operator
