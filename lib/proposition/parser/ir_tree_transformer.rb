@@ -5,9 +5,11 @@ module Proposition
       if ir_tree.leaf_node?
         AtomicSentence.new(ir_tree.atom.string)
       elsif ir_tree.unary?
-        #create + return a unary op
+        transformed_child = transform(ir_tree.children[0])
+        NegatedSentence.new(transformed_child)
       elsif ir_tree.binary?
-        #recover the operator
+        #TODO: Add transformation for Implication, BICONDITIONAL
+        #and Xor operators to And and Or sentences
         child_nodes = ir_tree.children
         left_child = transform(child_nodes[0])
         right_child = transform(child_nodes[1])

@@ -12,6 +12,17 @@ module Proposition
         expect(IRTreeTransformer.transform(ir_tree_a)).to eq(a)
       end
 
+      context "with a unary not operator" do
+        let(:transformed) { IRTreeTransformer.transform(ir_tree_not_a) }
+        it "should transform to a Not sentence" do
+          expect(transformed).to be_a(NegatedSentence)
+        end
+
+        it "should contain the IRTree's child as a sub-sentence" do
+          expect(transformed.sentence).to eq(a)
+        end
+      end
+
       context "n-ary operators" do
         shared_examples_for "transforms to logical data structure" do
           it "should transform to an #{And} sentence" do
