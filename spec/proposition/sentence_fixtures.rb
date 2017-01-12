@@ -10,8 +10,10 @@ module Proposition
     let(:f) { AtomicSentence.new("F") }
     let(:g) { AtomicSentence.new("G") }
 
-    let(:a_or_b) { Or.new(a, Logic::OR, b) }
-    let(:c_or_d) { Or.new(c, Logic::OR, d) }
+    let(:a_or_b) { Or.new(a, b) }
+    let(:c_or_d) { Or.new(c, d) }
+    let(:a_and_b) { And.new(a, b) }
+    let(:c_and_d) { And.new(c, d) }
 
     let(:not_sentence) { NegatedSentence.new(a) }
   end
