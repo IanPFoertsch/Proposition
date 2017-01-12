@@ -1,5 +1,7 @@
 require "proposition/version"
 require 'active_support'
+require "active_support/core_ext/string"
+require "active_support/core_ext/array"
 
 module Proposition
   autoload  :AtomicSentence, 'proposition/sentence/atomic_sentence'
