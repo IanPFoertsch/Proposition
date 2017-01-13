@@ -6,33 +6,30 @@ module Proposition
       elsif ir_tree.unary?
         transformed_child = transform(ir_tree.children[0])
         NegatedSentence.new(transformed_child)
-      elsif ir_tree.binary?
+      else
         #TODO: Add transformation for Implication, BICONDITIONAL
         #and Xor operators to And and Or sentences
-        child_nodes = ir_tree.children
-        left_child = transform(child_nodes[0])
-        right_child = transform(child_nodes[1])
-        clazz_name(ir_tree).new(left_child, right_child)
-      else #sentence is n-ary
-        clazz = clazz_name(ir_tree)
-        children = split_children(ir_tree.children)
-        left_children = children.first
-        right_children = children.last
-        left = handle_sub_set(left_children, clazz)
-        right = handle_sub_set(right_children, clazz)
-        clazz.new(left, right)
+        build_sub_sentences(ir_tree.children, clazz_name(ir_tree))
       end
     end
 
-    def self.handle_sub_set(children, clazz)
-      #CASE: children is nil
-      #CASE: 1 child in array
-      #CASE: 2 or more children in array
-      if children.size == 1
+    def self.build_sub_sentences(children, clazz)
+      #this is all at 1 level of recursion: we are trying to handle transforming
+      #an n-ary sentence into a binary sentence by recursively spliting the
+      #n_ary array and assembling a binary data structure from it, therefor maintining
+      #an identical operator is proper.
+      if children.empty?
+        ArgumentError.new("build_sub_sentences called with empty array")
+      elsif children.size == 1
         return transform(children.first)
       elsif children.size == 2
         left = transform(children.first)
         right = transform(children.last)
+        return clazz.new(left, right)
+      else #more than 2 children in the array
+        left_children, right_children = split_children(children)
+        left = build_sub_sentences(left_children, clazz)
+        right = build_sub_sentences(right_children, clazz)
         return clazz.new(left, right)
       end
     end

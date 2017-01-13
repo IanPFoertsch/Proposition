@@ -7,6 +7,7 @@ module Proposition
     let(:c_atom) { Atom.new("C") }
     let(:d_atom) { Atom.new("D") }
     let(:e_atom) { Atom.new("E") }
+    let(:f_atom) { Atom.new("F") }
 
     let(:or_operator) { NAryOperator.new("or") }
     let(:and_operator) { NAryOperator.new("and") }

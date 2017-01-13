@@ -72,6 +72,23 @@ module Proposition
           include_examples "transforms to logical data structure"
         end
 
+        context "with a deeply nested 8 member tree" do
+          let(:transformed) { IRTreeTransformer.transform(ir_tree_8_ary_and) }
+          let(:expected_class) { And }
+          let(:left) { a_and_b_and_c_and_d }
+          let(:right) { a_and_b_and_c_and_d }
+
+          include_examples "transforms to logical data structure"
+        end
+
+        context "with mixed operators" do
+          let(:transformed) { IRTreeTransformer.transform(ir_tree_8_mixed_operator) }
+          let(:expected_class) { Or }
+          let(:left) { a_and_b_or_c_and_d_or_d }
+          let(:right) { e_or_f }
+
+          include_examples "transforms to logical data structure"
+        end
       end
     end
   end

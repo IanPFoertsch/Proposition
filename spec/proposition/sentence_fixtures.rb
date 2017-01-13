@@ -15,6 +15,11 @@ module Proposition
     let(:a_and_b) { And.new(a, b) }
     let(:c_and_d) { And.new(c, d) }
 
+    let(:a_and_b_and_c_and_d) { And.new(a_and_b, c_and_d) }
+    let(:a_and_b_or_c_and_d) { Or.new(a_and_b, c_and_d) }
+    let(:a_and_b_or_c_and_d_or_d) { Or.new(a_and_b_or_c_and_d, d) }
+    let(:e_or_f) { Or.new(e, f) }
+
     let(:not_sentence) { NegatedSentence.new(a) }
   end
 end
