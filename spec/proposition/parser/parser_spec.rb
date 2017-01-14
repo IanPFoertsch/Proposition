@@ -151,11 +151,6 @@ module Proposition
           include_examples "accept string"
         end
 
-        context "with simple non-nested atoms " do
-          let(:input) { "one and two and three" }
-          include_examples "accept string"
-        end
-
         context "with simple non-nested atoms in parens" do
           let(:input) { "(one and two and three)" }
           include_examples "accept string"
@@ -163,6 +158,11 @@ module Proposition
 
         context "with a series of unary operators" do
           let(:input) { "not one not two not three" }
+          include_examples "reject string"
+        end
+
+        context "with an syntactically incorrect unary operator" do
+          let(:input) { "one and two not three" }
           include_examples "reject string"
         end
 
@@ -174,9 +174,7 @@ module Proposition
 
           context "with differing operators" do
             let(:input) { "(one) and (two) or (three)" }
-            it "should not accept the input string" do
-              expect { parser.parse_sentence } .to raise_error(Parser::ParseError)
-            end
+            include_examples "reject string"
           end
 
           context "with nested n-ary sentences" do

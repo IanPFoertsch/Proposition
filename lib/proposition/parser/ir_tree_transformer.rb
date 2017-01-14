@@ -9,17 +9,13 @@ module Proposition
       else
         #TODO: Add transformation for Implication, BICONDITIONAL
         #and Xor operators to And and Or sentences
-        build_sub_sentences(ir_tree.children, clazz_name(ir_tree))
+        nary_to_binary_sentence(ir_tree.children, clazz_name(ir_tree))
       end
     end
 
-    def self.build_sub_sentences(children, clazz)
-      #this is all at 1 level of recursion: we are trying to handle transforming
-      #an n-ary sentence into a binary sentence by recursively spliting the
-      #n_ary array and assembling a binary data structure from it, therefor maintining
-      #an identical operator is proper.
+    def self.nary_to_binary_sentence(children, clazz)
       if children.empty?
-        ArgumentError.new("build_sub_sentences called with empty array")
+        ArgumentError.new("nary_to_binary_sentence called with empty array")
       elsif children.size == 1
         return transform(children.first)
       elsif children.size == 2
@@ -28,8 +24,8 @@ module Proposition
         return clazz.new(left, right)
       else #more than 2 children in the array
         left_children, right_children = split_children(children)
-        left = build_sub_sentences(left_children, clazz)
-        right = build_sub_sentences(right_children, clazz)
+        left = nary_to_binary_sentence(left_children, clazz)
+        right = nary_to_binary_sentence(right_children, clazz)
         return clazz.new(left, right)
       end
     end
