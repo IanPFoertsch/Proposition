@@ -6,8 +6,12 @@ module Proposition
       let(:tree) { parser.parse_sentence }
 
       describe "parse" do
+        let(:parsed) { parser.parse }
         context "it should return a sentence data structure" do
-
+          let(:input) { "raining and snowing;" }
+          it "should return a propositional logic data structure" do
+            expect(parsed).to be_a(::Proposition::Sentence)
+          end
         end
       end
 
@@ -37,7 +41,7 @@ module Proposition
 
       describe "parse_sentence" do
         context "with a single atom" do
-          let(:input) { "raining" }
+          let(:input) { "raining;" }
           include_examples "IRTree type"
 
           it "should return shallow IR node" do
@@ -47,27 +51,27 @@ module Proposition
         end
 
         context "with a unary sentence structure" do
-          let(:input) { "not raining" }
+          let(:input) { "not raining;" }
           include_examples "accept string"
           include_examples "IRTree type"
           include_examples "IRTree operator token", "not"
 
           context "with a tail" do
-            let(:input) { "not raining or snowing" }
+            let(:input) { "not raining or snowing;" }
             include_examples "accept string"
             include_examples "IRTree type"
             include_examples "IRTree operator token", "or"
           end
 
           context "within a n-ary sentence structure" do
-            let(:input) { "snowing or not raining or misting" }
+            let(:input) { "snowing or not raining or misting;" }
             include_examples "accept string"
             include_examples "IRTree type"
             include_examples "IRTree operator token", "or"
           end
 
           context "with a nested string of unary operators" do
-            let(:input) { "not not not raining" }
+            let(:input) { "not not not raining;" }
             include_examples "accept string"
             include_examples "IRTree operator token", "not"
 
@@ -80,14 +84,14 @@ module Proposition
             end
 
             context "within an n-ary sentence structure" do
-              let(:input) { "snowing or not not raining or misting" }
+              let(:input) { "snowing or not not raining or misting;" }
               include_examples "accept string"
               include_examples "IRTree type"
               include_examples "IRTree operator token", "or"
             end
 
             context "with an invalid sequence of unary operators" do
-              let(:input) { "snowing or not raining not misting" }
+              let(:input) { "snowing or not raining not misting;" }
               include_examples "reject string"
             end
           end
@@ -95,12 +99,12 @@ module Proposition
 
         context "binary sentence structure" do
           context "with parenthesis" do
-            let(:input) { "(one and two)" }
+            let(:input) { "(one and two);" }
             include_examples "accept string"
           end
 
           context "without parenthesis" do
-            let(:input) { "one and two" }
+            let(:input) { "one and two;" }
             include_examples "accept string"
             include_examples "IRTree type"
 
@@ -122,17 +126,17 @@ module Proposition
           end
 
           context "with a nested sentence" do
-            let(:input) { "one and (two)" }
+            let(:input) { "one and (two);" }
             include_examples "accept string"
           end
 
           context "with a two nested atoms in a binary sentence" do
-            let(:input) { "(one) and (two)" }
+            let(:input) { "(one) and (two);" }
             include_examples "accept string"
           end
 
           context "with an atom, followed by an optional tail" do
-            let(:input) { "one and two and three"}
+            let(:input) { "one and two and three;"}
             include_examples "accept string"
 
 
@@ -144,48 +148,47 @@ module Proposition
 
         context "n-ary sentence structure" do
           context "starting with a unary sentence" do
-            let(:input) { "not one and two and three" }
+            let(:input) { "not one and two and three;" }
             include_examples "accept string"
             include_examples "IRTree operator token", "and"
             it "should have a unary not sentence as the first child" do
-              puts tree.inspect
               expect(tree.children.first.operator).to be_a(UnaryOperator)
             end
           end
 
           context "with simple non-nested atoms " do
-            let(:input) { "one and two and three" }
+            let(:input) { "one and two and three;" }
             include_examples "accept string"
           end
 
           context "with simple non-nested atoms in parens" do
-            let(:input) { "(one and two and three)" }
+            let(:input) { "(one and two and three);" }
             include_examples "accept string"
           end
 
           context "with a series of unary operators" do
-            let(:input) { "not one not two not three" }
+            let(:input) { "not one not two not three;" }
             include_examples "reject string"
           end
 
           context "with an syntactically incorrect unary operator" do
-            let(:input) { "one and two not three" }
+            let(:input) { "one and two not three;" }
             include_examples "reject string"
           end
 
           context "with three nested sentences " do
             context "with identical operators" do
-              let(:input) { "(one) and (two) and (three)" }
+              let(:input) { "(one) and (two) and (three);" }
               include_examples "accept string"
             end
 
             context "with differing operators" do
-              let(:input) { "(one) and (two) or (three)" }
+              let(:input) { "(one) and (two) or (three);" }
               include_examples "reject string"
             end
 
             context "with nested n-ary sentences" do
-              let(:input) { "((one and (two or four) and (three) and four) or (two) or three)" }
+              let(:input) { "((one and (two or four) and (three) and four) or (two) or three);" }
               include_examples "accept string"
             end
           end

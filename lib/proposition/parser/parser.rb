@@ -18,6 +18,8 @@ module Proposition
 
       def parse
         ir_tree = parse_sentence
+        assert_and_consume_terminal
+        
         IRTreeTransformer.transform(ir_tree)
       end
 
@@ -27,17 +29,13 @@ module Proposition
           tree = parse_sentence_in_parenthesis
           tail = parse_optional_sentence_tail
           conjoin_optional_tail(tree, tail)
-
         elsif current.is_a?(UnaryOperator)
           parse_unary_sentence_with_tail
-
         else
           tree = parse_atomic_sentence
           tail = parse_optional_sentence_tail
           conjoin_optional_tail(tree, tail)
-
         end
-
       end
 
       def parse_atomic_sentence
@@ -140,6 +138,14 @@ module Proposition
       def assert_next_not_unary
         if look_ahead.is_a?(UnaryOperator)
           raise ParseError.new("Sentences cannot be concatenated using a unary operator")
+        end
+      end
+
+      def assert_and_consume_terminal
+        terminal = lexer.get_next_token
+
+        unless terminal.is_a?(Terminal)
+          raise ParseError.new("Expecting a terminal")
         end
       end
 

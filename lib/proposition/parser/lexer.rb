@@ -59,13 +59,13 @@ module Proposition
             NAryOperator.new(string)
           elsif current_is_unary_operator?(string)
             UnaryOperator.new(string)
-          elsif current_is_terminal?(string)
-            Terminal.new(string)
           else
             Atom.new(string)
           end
         elsif current_is_parenthesis?
           return Parenthesis.new(consume_current)
+        elsif current_is_terminal?
+          Terminal.new(consume_current)
         else
           raise "No rule defined for character #{current_character}"
         end
@@ -87,8 +87,8 @@ module Proposition
         N_ARY_OPERATORS.include?(string)
       end
 
-      def current_is_terminal?(string)
-        TERMINALS.include?(string)
+      def current_is_terminal?
+        TERMINALS.include?(current_character)
       end
 
       def current_is_character?
