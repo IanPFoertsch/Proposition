@@ -1,4 +1,3 @@
-require "pry"
 module Proposition
   module Parser
     class Parser
@@ -17,9 +16,12 @@ module Proposition
       end
 
       def parse
+        construct_sentence
+      end
+
+      def construct_sentence
         ir_tree = parse_sentence
         assert_and_consume_terminal
-        
         IRTreeTransformer.transform(ir_tree)
       end
 
@@ -145,7 +147,7 @@ module Proposition
         terminal = lexer.get_next_token
 
         unless terminal.is_a?(Terminal)
-          raise ParseError.new("Expecting a terminal")
+          raise ParseError.new("Expecting a terminal at the end of a sentence")
         end
       end
 

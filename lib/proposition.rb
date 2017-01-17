@@ -10,7 +10,7 @@ module Proposition
 
   autoload  :Logic, 'proposition/sentence/logic'
   autoload  :Evaluator, 'proposition/sentence/evaluator'
-  autoload  :NegatedSentence, 'proposition/sentence/negated_sentence'
+  autoload  :Not, 'proposition/sentence/not'
   autoload  :BinarySentence, 'proposition/sentence/binary/binary_sentence'
   autoload  :And, 'proposition/sentence/binary/and'
   autoload  :Or, 'proposition/sentence/binary/or'

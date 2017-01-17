@@ -1,8 +1,7 @@
 require_relative "sentence"
 
 module Proposition
-  #TODO: Rename this to 'Not' to follow the convention with AND/OR
-  class NegatedSentence < Sentence
+  class Not < Sentence
     attr_reader :sentence
 
 
@@ -15,7 +14,7 @@ module Proposition
     end
 
     def ==(other)
-      return false unless other.is_a?(NegatedSentence)
+      return false unless other.is_a?(Not)
       return @sentence == other.sentence
     end
 
