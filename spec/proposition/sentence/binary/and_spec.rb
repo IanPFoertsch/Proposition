@@ -101,7 +101,7 @@ module Proposition
       context "with a negated sentence" do
         #using a_or_b here due to the fact that we will perform demorgan's negation
         #resulting an AND sentence when pushing negation downwards
-        #let(:subject) NegatedSentence.new(a_or_b)
+        #let(:subject) Not.new(a_or_b)
 
         it "should push the negation down into the atomic components" do
           #puts subject.

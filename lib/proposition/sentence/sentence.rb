@@ -15,7 +15,7 @@ module Proposition
     end
 
     def negate
-      NegatedSentence.new(self.deep_copy)
+      Not.new(self.deep_copy)
     end
 
     def contains_or?

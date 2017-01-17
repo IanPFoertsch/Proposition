@@ -28,7 +28,7 @@ module Proposition
         context "with a unary not operator" do
           let(:transformed) { IRTreeTransformer.transform(ir_tree_not_a) }
           it "should transform to a Not sentence" do
-            expect(transformed).to be_a(NegatedSentence)
+            expect(transformed).to be_a(Not)
           end
 
           it "should contain the IRTree's child as a sub-sentence" do

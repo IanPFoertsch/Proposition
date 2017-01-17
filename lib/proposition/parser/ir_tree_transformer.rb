@@ -6,7 +6,7 @@ module Proposition
           Proposition::AtomicSentence.new(ir_tree.atom.string)
         elsif ir_tree.unary?
           transformed_child = transform(ir_tree.children[0])
-          Proposition::NegatedSentence.new(transformed_child)
+          Proposition::Not.new(transformed_child)
         else
           #TODO: Add transformation for Implication, BICONDITIONAL
           #and Xor operators to And and Or sentences

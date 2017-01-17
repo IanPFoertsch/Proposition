@@ -5,16 +5,6 @@ module Proposition
       let(:parser) { Parser.new(input) }
       let(:tree) { parser.parse_sentence }
 
-      describe "parse" do
-        let(:parsed) { parser.parse }
-        context "it should return a sentence data structure" do
-          let(:input) { "raining and snowing;" }
-          it "should return a propositional logic data structure" do
-            expect(parsed).to be_a(::Proposition::Sentence)
-          end
-        end
-      end
-
       shared_examples_for "accept string" do
         it "should accept the input string" do
           expect { parser.parse_sentence } .not_to raise_error
@@ -36,6 +26,25 @@ module Proposition
       shared_examples_for "IRTree operator token" do |token_string|
         it "should have an '#{token_string}' operator" do
           expect(tree.operator.string).to eq(token_string)
+        end
+      end
+
+      describe "parse" do
+        let(:parsed) { parser.parse }
+        context "it should return a sentence data structure" do
+          let(:input) { "raining and snowing;" }
+
+          it "should return a propositional logic data structure" do
+            expect(parsed).to be_a(::Proposition::Sentence)
+          end
+
+          context "without a terminal symbol" do
+            let(:input) { "raining" }
+
+            it "should reject the string" do
+              expect { parser.parse } .to raise_error(Parser::ParseError)
+            end
+          end
         end
       end
 

@@ -1,15 +1,11 @@
-# require 'spec_helper'
-require_relative "../../../lib/proposition/sentence/negated_sentence"
-require_relative "../../../lib/proposition/sentence/atomic_sentence"
-require_relative "../../../lib/proposition/sentence/binary/or"
-
+require 'spec_helper'
 
 module Proposition
-  RSpec.describe NegatedSentence do
+  RSpec.describe Not do
     let(:a) { AtomicSentence.new("a") }
     let(:b) { AtomicSentence.new("b") }
     let(:a_or_b) { Or.new(a, b) }
-    let(:negated_sentence) { NegatedSentence.new(a_or_b) }
+    let(:negated_sentence) { Not.new(a_or_b) }
     describe "in_text" do
 
       it "should return the sentence's text value wrapped in 'NOT ...'" do

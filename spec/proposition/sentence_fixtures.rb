@@ -20,6 +20,6 @@ module Proposition
     let(:a_and_b_or_c_and_d_or_d) { Or.new(a_and_b_or_c_and_d, d) }
     let(:e_or_f) { Or.new(e, f) }
 
-    let(:not_sentence) { NegatedSentence.new(a) }
+    let(:not_sentence) { Not.new(a) }
   end
 end
