@@ -22,11 +22,13 @@ module Proposition
 
   module Parser
     autoload  :Atom, 'proposition/parser/token/token'
+    autoload  :BinaryOperator, 'proposition/parser/token/token'
     autoload  :IRTree, 'proposition/parser/ir_tree'
     autoload  :IRTreeTransformer, 'proposition/parser/ir_tree_transformer'
     autoload  :Lexer, 'proposition/parser/lexer'
     autoload  :Operator, 'proposition/parser/token/token'
     autoload  :NAryOperator, 'proposition/parser/token/token'
+
     autoload  :Parenthesis, 'proposition/parser/token/token'
     autoload  :Parser, 'proposition/parser/parser'
     autoload  :UnaryOperator, 'proposition/parser/token/token'

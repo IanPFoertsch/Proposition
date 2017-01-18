@@ -56,9 +56,15 @@ module Proposition
             end
           end
           context "n_ary" do
-            let(:operators) { ["and", "or", "xor", "=>", "<=>"] }
+            let(:operators) { ["and", "or"] }
             include_examples "recognizes operators", NAryOperator
           end
+
+          context "binary" do
+            let(:operators) { ["xor", "=>", "<=>"] }
+            include_examples "recognizes operators", BinaryOperator
+          end
+
           context "unary" do
             let(:operators) { ["not"] }
             include_examples "recognizes operators", UnaryOperator

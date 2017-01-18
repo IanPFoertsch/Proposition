@@ -20,9 +20,13 @@ module Proposition
       end
 
       def construct_sentence
-        ir_tree = parse_sentence
-        assert_and_consume_terminal
-        IRTreeTransformer.transform(ir_tree)
+        structures = []
+        while look_ahead
+          ir_tree = parse_sentence
+          assert_and_consume_terminal
+          structures.push(IRTreeTransformer.transform(ir_tree))
+        end
+        structures
       end
 
       def parse_sentence
@@ -96,9 +100,20 @@ module Proposition
 
       def parse_optional_sentence_tail
         #TODO: Refactor this block into smaller chunks
-        assert_next_not_unary
-        return nil unless look_ahead.is_a?(NAryOperator)
+        if look_ahead.is_a?(NAryOperator)
+          parse_n_ary_components
+        elsif look_ahead.is_a?(BinaryOperator)
+          parse_binary_tail
+        end
+      end
 
+      def parse_binary_tail
+        operator = parse_operator
+        tail = parse_sentence_without_optional_tail
+        IRTree.new(nil, operator, tail)
+      end
+
+      def parse_n_ary_components
         sentences = []
         previous_operator = nil
 

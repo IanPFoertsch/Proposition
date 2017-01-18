@@ -19,6 +19,10 @@ module Proposition
       let(:ir_tree_c_and_d) { IRTree.new(nil, and_operator, [ir_tree_c, ir_tree_d]) }
       let(:ir_tree_not_a) { IRTree.new(nil, not_operator, [ir_tree_a]) }
 
+      let(:ir_tree_a_implication_b) do
+        IRTree.new(nil, implication_operator, [ir_tree_a, ir_tree_b])
+      end
+
       let(:ir_tree_nary_or) do
         IRTree.new(nil, or_operator, [ir_tree_a, ir_tree_b, ir_tree_c, ir_tree_d])
       end
