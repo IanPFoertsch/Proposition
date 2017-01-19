@@ -91,6 +91,14 @@ module Proposition
             include_examples "transforms to logical data structure"
           end
         end
+
+        context "implication operator" do
+          let(:transformed) { IRTreeTransformer.transform(ir_tree_a_implication_b) }
+          let(:expected_class) { Or }
+          let(:left) { not_a }
+          let(:right) { b }
+          include_examples "transforms to logical data structure"
+        end
       end
     end
   end

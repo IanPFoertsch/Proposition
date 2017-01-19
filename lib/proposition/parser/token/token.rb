@@ -30,5 +30,8 @@ module Proposition
 
     class UnaryOperator < Operator
     end
+
+    class BinaryOperator < Operator
+    end
   end
 end
