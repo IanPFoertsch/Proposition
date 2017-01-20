@@ -25,8 +25,14 @@ module Proposition
 
       shared_examples_for "IRTree operator token" do |token_string|
         it "should have an '#{token_string}' operator" do
-          puts tree.inspect
           expect(tree.operator.string).to eq(token_string)
+        end
+      end
+
+      shared_examples_for "child atom order" do |atom_string_1, atom_string_2|
+        it "should maintain the order of sub sentences" do
+          expect(tree.children[0].atom.string).to eq(atom_string_1)
+          expect(tree.children[1].atom.string).to eq(atom_string_2)
         end
       end
 
@@ -108,6 +114,21 @@ module Proposition
         end
 
         context "binary sentence structure" do
+          shared_examples_for "binary sentence" do |operator_string, child_1, child_2|
+            include_examples "accept string"
+            include_examples "IRTree type"
+
+            context "tree structure" do
+              include_examples "IRTree operator token", operator_string
+
+              it "should return a binary IRTree" do
+                expect(tree.binary?).to be(true)
+              end
+
+              include_examples "child atom order", child_1, child_2
+            end
+          end
+
           context "with parenthesis" do
             let(:input) { "(one and two);" }
             include_examples "accept string"
@@ -115,24 +136,7 @@ module Proposition
 
           context "without parenthesis" do
             let(:input) { "one and two;" }
-            include_examples "accept string"
-            include_examples "IRTree type"
-
-            context "tree structure" do
-              it "should return an IRTree with an operator" do
-                expect(tree.operator.string).to eq("and")
-              end
-
-              it "should return a binary IRTree" do
-                expect(tree.binary?).to be(true)
-              end
-
-              it "should have 'one' and 'two as children'" do
-                children = tree.children
-                expect(children[0].atom.string).to eq("one")
-                expect(children[1].atom.string).to eq("two")
-              end
-            end
+            include_examples "binary sentence", "and", "one", "two"
           end
 
           context "with a nested sentence" do
@@ -156,14 +160,14 @@ module Proposition
           end
 
           context "with a binary operator" do
-            let(:input) { "one => two" }
+            context "implication" do
+              let(:input) { "one => two" }
+              include_examples "binary sentence", "=>", "one", "two"
+            end
 
-            include_examples "IRTree type"
-            include_examples "IRTree operator token", "=>"
-
-            it "should maintain the order of sub sentences" do
-              expect(tree.children[0].atom.string).to eq("one")
-              expect(tree.children[1].atom.string).to eq("two")
+            context "xor" do
+              let(:input) { "one xor two" }
+              include_examples "binary sentence", "xor", "one", "two"
             end
           end
         end

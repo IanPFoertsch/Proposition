@@ -14,6 +14,7 @@ module Proposition
       let(:and_operator) { NAryOperator.new("and") }
       let(:not_operator) { UnaryOperator.new("not") }
       let(:implication_operator) { BinaryOperator.new("=>") }
+      let(:xor_operator) { BinaryOperator.new("xor") }
     end
   end
 end

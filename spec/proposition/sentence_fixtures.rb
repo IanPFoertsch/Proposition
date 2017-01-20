@@ -21,5 +21,9 @@ module Proposition
     let(:e_or_f) { Or.new(e, f) }
 
     let(:not_a) { Not.new(a) }
+    let(:not_b) { Not.new(b) }
+
+    let(:a_and_not_b) { And.new(a, not_b) }
+    let(:not_a_and_b) { And.new(not_a, b) }
   end
 end
