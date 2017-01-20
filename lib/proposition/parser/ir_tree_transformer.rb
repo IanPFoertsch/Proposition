@@ -10,8 +10,14 @@ module Proposition
           transformed_child = transform(ir_tree.children[0])
           Proposition::Not.new(transformed_child)
         else
+          #reforcotr this double-nesting
           if TRANSFORMED_OPERATORS.include?(ir_tree.operator.string)
-            implication_transformation(ir_tree)
+            case ir_tree.operator.string
+            when "=>"
+              return implication_transformation(ir_tree)
+            when "xor"
+              return xor_transformation(ir_tree)
+            end
           else
             nary_to_binary_sentence(ir_tree.children, clazz_name(ir_tree))
           end
@@ -44,17 +50,39 @@ module Proposition
         children.in_groups(2).map(&:compact)
       end
 
+      def self.split_binary_children(ir_tree)
+        left = ir_tree.children.first
+        right = ir_tree.children.last
+        [left, right]
+      end
+
+      def self.binary_recursion(ir_tree)
+        left, right = split_binary_children(ir_tree)
+        recursed_left = transform(left)
+        recursed_right = transform(right)
+        [recursed_left, recursed_right]
+      end
+
       def self.implication_transformation(ir_tree)
         #TODO: assert implication sentences are binary in the parser
         #Implication maps to ~a or b
-        left = ir_tree.children.first
-        right = ir_tree.children.last
-        recursed_left = transform(left)
-        recursed_right = transform(right)
+        left, right = binary_recursion(ir_tree)
 
-        negated_left = Proposition::Not.new(recursed_left)
-        Proposition::Or.new(negated_left, recursed_right)
+        negated_left = Proposition::Not.new(left)
+        Proposition::Or.new(negated_left, right)
       end
+
+      def self.xor_transformation(ir_tree)
+        left, right = binary_recursion(ir_tree)
+        not_left = Proposition::Not.new(left)
+        not_right = Proposition::Not.new(right)
+
+        left_side = Proposition::And.new(left, not_right)
+        right_side = Proposition::And.new(not_left, right)
+
+        Proposition::Or.new(left_side, right_side)
+      end
+
     end
   end
 end

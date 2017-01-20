@@ -99,6 +99,16 @@ module Proposition
           let(:right) { b }
           include_examples "transforms to logical data structure"
         end
+
+        context "xor operator" do
+          context "implication operator" do
+            let(:transformed) { IRTreeTransformer.transform(ir_tree_a_xor_b) }
+            let(:expected_class) { Or }
+            let(:left) { a_and_not_b }
+            let(:right) { not_a_and_b }
+            include_examples "transforms to logical data structure"
+          end
+        end
       end
     end
   end

@@ -23,6 +23,10 @@ module Proposition
         IRTree.new(nil, implication_operator, [ir_tree_a, ir_tree_b])
       end
 
+      let(:ir_tree_a_xor_b) do
+        IRTree.new(nil, xor_operator, [ir_tree_a, ir_tree_b])
+      end
+
       let(:ir_tree_nary_or) do
         IRTree.new(nil, or_operator, [ir_tree_a, ir_tree_b, ir_tree_c, ir_tree_d])
       end
