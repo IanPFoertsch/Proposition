@@ -1,6 +1,6 @@
 module Proposition
   class Or < BinarySentence
-    def compliment
+    def self.compliment
       And
     end
 

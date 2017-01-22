@@ -17,6 +17,8 @@ module Proposition
               return implication_transformation(ir_tree)
             when "xor"
               return xor_transformation(ir_tree)
+            when "<=>"
+              return biconditional_transformation(ir_tree)
             end
           else
             nary_to_binary_sentence(ir_tree.children, clazz_name(ir_tree))
@@ -63,9 +65,14 @@ module Proposition
         [recursed_left, recursed_right]
       end
 
+      def self.construct_negated_pair(left, right)
+        not_left = Proposition::Not.new(left)
+        not_right = Proposition::Not.new(right)
+
+        [not_left, not_right]
+      end
+
       def self.implication_transformation(ir_tree)
-        #TODO: assert implication sentences are binary in the parser
-        #Implication maps to ~a or b
         left, right = binary_recursion(ir_tree)
 
         negated_left = Proposition::Not.new(left)
@@ -73,16 +80,22 @@ module Proposition
       end
 
       def self.xor_transformation(ir_tree)
-        left, right = binary_recursion(ir_tree)
-        not_left = Proposition::Not.new(left)
-        not_right = Proposition::Not.new(right)
-
-        left_side = Proposition::And.new(left, not_right)
-        right_side = Proposition::And.new(not_left, right)
-
-        Proposition::Or.new(left_side, right_side)
+        build_complement(ir_tree, Proposition::Or)
       end
 
+      def self.biconditional_transformation(ir_tree)
+        build_complement(ir_tree, Proposition::And)
+      end
+
+      def self.build_complement(ir_tree, clazz)
+        left, right = binary_recursion(ir_tree)
+        not_left, not_right = construct_negated_pair(left, right)
+
+        left_side = clazz.compliment.new(not_left, right)
+        right_side = clazz.compliment.new(left, not_right)
+
+        clazz.new(left_side, right_side)
+      end
     end
   end
 end
