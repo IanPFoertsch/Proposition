@@ -1,6 +1,10 @@
 module Proposition
   class BinarySentence < Sentence
 
+    def self.compliment
+      raise "Compliment not Implemented"
+    end
+
     def initialize(left, right)
       @left = left
       @right = right
@@ -35,7 +39,7 @@ module Proposition
     end
 
     def distribute_not
-      compliment.new(@left.negate, @right.negate)
+      self.class.compliment.new(@left.negate, @right.negate)
     end
 
     def push_not_down

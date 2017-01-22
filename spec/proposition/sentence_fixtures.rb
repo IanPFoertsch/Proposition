@@ -25,5 +25,8 @@ module Proposition
 
     let(:a_and_not_b) { And.new(a, not_b) }
     let(:not_a_and_b) { And.new(not_a, b) }
+
+    let(:a_or_not_b) { Or.new(a, not_b) }
+    let(:not_a_or_b) { Or.new(not_a, b) }
   end
 end

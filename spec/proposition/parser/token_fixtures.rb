@@ -15,6 +15,7 @@ module Proposition
       let(:not_operator) { UnaryOperator.new("not") }
       let(:implication_operator) { BinaryOperator.new("=>") }
       let(:xor_operator) { BinaryOperator.new("xor") }
+      let(:biconditional_operator) { BinaryOperator.new("<=>") }
     end
   end
 end
