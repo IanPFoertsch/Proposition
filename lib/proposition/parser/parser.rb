@@ -20,13 +20,13 @@ module Proposition
       end
 
       def construct_sentence
-        structures = []
+        kb = ::Proposition::KnowledgeBase.new
         while look_ahead
           ir_tree = parse_sentence
           assert_and_consume_terminal
-          structures.push(IRTreeTransformer.transform(ir_tree))
+          kb.push(IRTreeTransformer.transform(ir_tree))
         end
-        structures
+        kb
       end
 
       def parse_sentence
@@ -65,6 +65,8 @@ module Proposition
           #we have to use left_append here b/c if a unary sentence has
           #a tail, it necessarily is nested within the n_ary_operator
           #present within the tail
+          tail.left_append(tree)
+        elsif tail.operator.is_a?(BinaryOperator)
           tail.left_append(tree)
         else
           tree.append(tail)

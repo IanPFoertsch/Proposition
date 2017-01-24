@@ -41,15 +41,24 @@ module Proposition
         context "it should return a sentence data structure" do
           let(:input) { "raining and snowing;" }
 
-          # it "should return a propositional logic data structure" do
-          #   expect(parsed).to be_a(::Proposition::Sentence)
-          # end
+          it "should return a KnowledgeBase" do
+            expect(parsed).to be_a(KnowledgeBase)
+
+          end
 
           context "without a terminal symbol" do
             let(:input) { "raining" }
 
             it "should reject the string" do
               expect { parser.parse } .to raise_error(Parser::ParseError)
+            end
+          end
+
+          context "with a series of input sentences" do
+            let(:input) { "raining; snowing; raining => snowing;" }
+
+            it "contain the same number of input sentences" do
+              expect(parsed.count).to eq(3)
             end
           end
         end
@@ -163,11 +172,22 @@ module Proposition
             context "implication" do
               let(:input) { "one => two" }
               include_examples "binary sentence", "=>", "one", "two"
+
+              context "in parenthesis" do
+                let(:input) { "(snowing and raining) => not sunny;"}
+
+                include_examples "IRTree operator token", "=>"
+              end
             end
 
             context "xor" do
               let(:input) { "one xor two" }
               include_examples "binary sentence", "xor", "one", "two"
+            end
+
+            context "biconditional" do
+              let(:input) { "one <=> two" }
+              include_examples "binary sentence", "<=>", "one", "two"
             end
           end
         end
