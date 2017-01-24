@@ -18,7 +18,7 @@ module Proposition
     end
 
     def operator
-      "nope"
+      raise NotImplementedError
     end
 
     def in_text

@@ -20,13 +20,13 @@ module Proposition
       end
 
       def construct_sentence
-        structures = []
+        kb = ::Proposition::KnowledgeBase.new
         while look_ahead
           ir_tree = parse_sentence
           assert_and_consume_terminal
-          structures.push(IRTreeTransformer.transform(ir_tree))
+          kb.push(IRTreeTransformer.transform(ir_tree))
         end
-        structures
+        kb
       end
 
       def parse_sentence
