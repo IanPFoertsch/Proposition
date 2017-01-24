@@ -66,6 +66,8 @@ module Proposition
           #a tail, it necessarily is nested within the n_ary_operator
           #present within the tail
           tail.left_append(tree)
+        elsif tail.operator.is_a?(BinaryOperator)
+          tail.left_append(tree)
         else
           tree.append(tail)
         end

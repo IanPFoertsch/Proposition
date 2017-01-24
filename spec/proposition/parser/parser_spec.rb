@@ -173,6 +173,12 @@ module Proposition
             context "implication" do
               let(:input) { "one => two" }
               include_examples "binary sentence", "=>", "one", "two"
+
+              context "in parenthesis" do
+                let(:input) { "(snowing and raining) => not sunny;"}
+
+                include_examples "IRTree operator token", "=>"
+              end
             end
 
             context "xor" do
