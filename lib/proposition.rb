@@ -16,13 +16,7 @@ module Proposition
   autoload  :Not, 'proposition/sentence/not'
   autoload  :Sentence, 'proposition/sentence/sentence'
   autoload  :Processor, 'proposition/operators/processor'
-
-
-
   autoload  :Or, 'proposition/sentence/binary/or'
-
-
-
   autoload  :ConjunctiveNormalForm, 'proposition/sentence/n_ary/conjunctive_normal_form'
   autoload  :NArySentence, 'proposition/sentence/n_ary/n_ary_sentence'
 

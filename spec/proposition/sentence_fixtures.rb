@@ -28,5 +28,9 @@ module Proposition
 
     let(:a_or_not_b) { Or.new(a, not_b) }
     let(:not_a_or_b) { Or.new(not_a, b) }
+
+    let(:clause_a_b_c) { Clause.new([a, b, c]) }
+    let(:clause_not_a_not_b) { Clause.new([not_a, not_b]) }
+    let(:clause_c) { Clause.new([c]) }
   end
 end

@@ -36,9 +36,9 @@ module Proposition
       end
 
       describe "left_append" do
-        context "with a leaf node operand" do
+        context "with a leaf node" do
           it "should raise an Error" do
-            expect{ tail.left_append(ir_tree_a) }.to raise_error(ArgumentError)
+            expect{ ir_tree_a.left_append(tail) }.to raise_error(ArgumentError)
           end
         end
 

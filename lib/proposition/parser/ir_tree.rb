@@ -29,8 +29,8 @@ module Proposition
       #In particular for inserting a unary sentence into the optional 'tail'
       #of the sentence
       def left_append(appendee)
-        if appendee.leaf_node?
-          raise ArgumentError.new("Left_append called with a leaf node operand, only supports nodes with children")
+        if leaf_node?
+          raise ArgumentError.new("Left_append called for a leaf node, only supports nodes with children")
         end
         IRTree.new(nil, operator, [appendee] + children)
       end
