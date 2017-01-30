@@ -108,8 +108,6 @@ module Proposition
           expect(sentences[0] == a_or_b.to_disjunction).to be(true)
         end
       end
-
-
     end
   end
 end
