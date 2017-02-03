@@ -21,5 +21,32 @@ module Proposition
         end
       end
     end
+
+    describe "initialize" do
+      shared_examples_for "alphabetize sentences" do
+        before do
+          allow(input).to receive(:operator).and_return("OP")
+          allow(expected).to receive(:operator).and_return("OP")
+        end
+
+        it "should re-order the input sentences to be sorted" do
+          expect(input.in_text).to eq(expected.in_text)
+        end
+      end
+
+      context "with a simple input sentence" do
+        let(:input) { NArySentence.new([c, b, a])}
+        let(:expected) { NArySentence.new([a, b, c])}
+
+        include_examples "alphabetize sentences"
+      end
+
+      context "with a nested sentence" do
+        let(:input) { NArySentence.new([c, e_or_f, a])}
+        let(:expected) { NArySentence.new([a, c, e_or_f])}
+
+        include_examples "alphabetize sentences"
+      end
+    end
   end
 end
