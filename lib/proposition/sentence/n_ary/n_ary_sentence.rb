@@ -4,7 +4,8 @@ module Proposition
   class NArySentence < Sentence
 
     def initialize(sentences)
-      @sentences = sentences
+      sorted = sentences.sort_by { |s| s.in_text }
+      @sentences = sorted
     end
 
     def conjoin(other)

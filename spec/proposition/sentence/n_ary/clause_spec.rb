@@ -9,6 +9,9 @@ module Proposition
 
       end
 
+      it "should sort the input into alphabetical order" do
+        
+      end
     end
 
     describe "resolve" do
