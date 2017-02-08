@@ -8,10 +8,6 @@ module Proposition
       it "should raise an error when give a non-atomic sentence" do
 
       end
-
-      it "should sort the input into alphabetical order" do
-        
-      end
     end
 
     describe "resolve" do
