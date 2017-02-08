@@ -30,8 +30,6 @@ module Proposition
       @sentences.include?(sentence)
     end
 
-
-
     def sentences_hash
       @sentences.inject({}) do |hash, sentence|
         hash[sentence.in_text] = sentence

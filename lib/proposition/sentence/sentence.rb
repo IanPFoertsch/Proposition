@@ -33,5 +33,13 @@ module Proposition
     def should_distribute_and?
       false
     end
+
+    def in_text
+      raise NotImplementedError
+    end
+
+    def hash
+      in_text.hash
+    end
   end
 end

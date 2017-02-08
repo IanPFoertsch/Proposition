@@ -48,5 +48,17 @@ module Proposition
         include_examples "alphabetize sentences"
       end
     end
+
+    describe "#hash" do
+      let(:input) { n_ary_a_b_c }
+
+      before do
+        allow(input).to receive(:operator).and_return("OP")
+      end
+      
+      it "should return the hash value of the string representation" do
+        expect(input.hash).to eq(n_ary_a_b_c.in_text.hash)
+      end
+    end
   end
 end
