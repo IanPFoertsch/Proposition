@@ -27,9 +27,11 @@ module Proposition
     end
 
     def ==(other)
-      return false unless other.is_a?(self.class)
-      return false unless other.sentences.size == @sentences.size
-      @sentences.all? { |sentence| other.sentences.include?(sentence) }
+      in_text == other.in_text
+    end
+
+    def eql?(other)
+      self == other
     end
   end
 end

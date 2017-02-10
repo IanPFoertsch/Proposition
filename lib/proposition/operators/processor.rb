@@ -1,4 +1,4 @@
-
+require 'set'
 module Proposition
   #TODO: Rename me something less lame than "processor"
   class Processor
